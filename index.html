@@ -155,7 +155,7 @@
    <div class="snowflake" style="left: 90%; animation-duration: 15s; animation-delay: 3s; font-size: 1em;">
     ⭐
    </div>
-   <div class="min-h-full flex flex-col items-center justify-center p-8">
+    <div class="min-h-full flex flex-col items-center justify-center p-8">
     <div class="w-full max-w-6xl mb-12 frosted-header rounded-3xl px-8 py-10 relative overflow-hidden">
      <span class="absolute top-4 right-6 text-white/60 text-sm tracking-wide">🎄 Giáng Sinh ấm áp</span>
      <div class="relative flex flex-col md:flex-row md:items-center md:justify-between gap-6">
@@ -172,6 +172,29 @@
        <div class="rounded-2xl px-4 py-3 bg-amber-400/20 border border-amber-300/30 text-amber-100 shadow-[var(--glow-amber)]">
         <p class="text-xs uppercase tracking-wide text-amber-200">Quà tặng</p>
         <p class="text-lg font-semibold">Bí mật 🎁</p>
+       </div>
+      </div>
+     </div>
+    </div>
+    <div class="w-full max-w-6xl mb-10 frosted-header rounded-3xl px-8 py-6 relative overflow-hidden">
+     <div class="halo-ring"></div>
+     <div class="relative grid grid-cols-1 lg:grid-cols-3 gap-6 items-center">
+      <div class="lg:col-span-2 space-y-3">
+       <p class="text-sm uppercase tracking-[0.2em] text-amber-200 font-semibold">Tham gia</p>
+       <h2 class="text-2xl font-bold text-white">Điền tên của bạn để xuất hiện trong danh sách người chơi</h2>
+       <p class="text-white/80">Nhập tên và nhấn tham gia, hệ thống sẽ hiển thị ngay cùng mọi người đang chơi.</p>
+       <div class="flex flex-col sm:flex-row gap-3 pt-2">
+        <input id="participantName" type="text" class="w-full px-4 py-3 rounded-xl border border-white/25 bg-white/80 text-gray-900 font-semibold shadow-inner focus:outline-none focus:ring-2 focus:ring-amber-300" placeholder="Tên của bạn...">
+        <button id="addParticipantBtn" class="px-6 py-3 bg-amber-400 text-gray-900 font-bold rounded-xl shadow-lg hover:scale-[1.02] transition">Tham gia</button>
+       </div>
+      </div>
+      <div class="bg-white/5 border border-white/10 rounded-2xl p-4 shadow-lg">
+       <div class="flex items-center justify-between text-white mb-3">
+        <span class="font-semibold">Danh sách người tham gia</span>
+        <span class="px-3 py-1 rounded-full bg-white/15 text-sm" id="participantCount">0</span>
+       </div>
+       <div id="participantList" class="space-y-2 max-h-48 overflow-y-auto">
+        <p class="text-white/70 text-sm">Chưa có ai tham gia, hãy là người đầu tiên!</p>
        </div>
       </div>
      </div>
@@ -428,6 +451,53 @@
         ["puzzle_4_answer", config.puzzle_4_answer || defaultConfig.puzzle_4_answer]
       ]);
     }
+
+    const participants = [];
+    const participantNameInput = document.getElementById('participantName');
+    const addParticipantBtn = document.getElementById('addParticipantBtn');
+    const participantList = document.getElementById('participantList');
+    const participantCount = document.getElementById('participantCount');
+
+    function renderParticipants() {
+      participantList.innerHTML = '';
+
+      if (participants.length === 0) {
+        participantList.innerHTML = '<p class="text-white/70 text-sm">Chưa có ai tham gia, hãy là người đầu tiên!</p>';
+        participantCount.textContent = '0';
+        return;
+      }
+
+      participants.forEach((name, index) => {
+        const item = document.createElement('div');
+        item.className = 'flex items-center gap-2 px-3 py-2 rounded-xl bg-white/10 border border-white/10 text-white';
+        item.innerHTML = `<span class="w-7 h-7 rounded-full bg-amber-400/90 text-gray-900 font-bold grid place-items-center">${index + 1}</span><span class="font-semibold">${name}</span>`;
+        participantList.appendChild(item);
+      });
+
+      participantCount.textContent = participants.length;
+    }
+
+    function addParticipant() {
+      const name = participantNameInput.value.trim();
+      if (!name) {
+        participantNameInput.focus();
+        return;
+      }
+
+      participants.push(name);
+      participantNameInput.value = '';
+      renderParticipants();
+      participantNameInput.focus();
+    }
+
+    addParticipantBtn.addEventListener('click', addParticipant);
+    participantNameInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        addParticipant();
+      }
+    });
+
+    renderParticipants();
 
     if (window.elementSdk) {
       window.elementSdk.init({
