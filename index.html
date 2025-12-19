@@ -111,30 +111,6 @@
   <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
  </head>
  <body class="h-full">
-  <div id="signupOverlay" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-sm">
-   <div class="relative w-11/12 max-w-md rounded-2xl border border-white/15 bg-white/10 p-8 text-white shadow-2xl shadow-purple-900/50">
-    <div class="absolute -left-6 -top-6 h-16 w-16 rounded-full bg-gradient-to-br from-amber-400/60 via-fuchsia-400/60 to-indigo-500/60 blur-xl"></div>
-    <div class="absolute -bottom-6 -right-6 h-20 w-20 rounded-full bg-gradient-to-br from-teal-400/40 via-blue-500/40 to-purple-500/40 blur-2xl"></div>
-    <div class="relative space-y-4">
-     <div class="flex items-center gap-3">
-      <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-white/15 text-2xl">🎄</div>
-      <div>
-       <p class="text-sm uppercase tracking-widest text-amber-200/80">Tham gia ngay</p>
-       <h2 class="text-2xl font-bold text-white">Đăng nhập để bắt đầu chơi</h2>
-      </div>
-     </div>
-     <p class="text-sm leading-relaxed text-slate-200/90">Vui lòng nhập biệt danh để mở khóa minigame. Form sẽ biến mất sau khi bạn đăng nhập.</p>
-     <form id="signupForm" class="space-y-4">
-      <div>
-       <label for="playerName" class="text-sm font-semibold text-amber-100">Biệt danh</label>
-       <input id="playerName" name="playerName" type="text" required class="mt-1 w-full rounded-xl border border-white/20 bg-slate-900/60 px-4 py-3 text-white placeholder:text-slate-300/70 focus:border-amber-300 focus:outline-none" placeholder="Nhập biệt danh" />
-      </div>
-      <button type="submit" class="w-full rounded-xl bg-gradient-to-r from-amber-400 via-rose-400 to-purple-500 px-4 py-3 text-center text-base font-semibold text-slate-900 shadow-lg shadow-amber-500/30 transition hover:from-amber-300 hover:via-rose-300 hover:to-purple-400">Đăng nhập &amp; tham gia</button>
-      <p class="text-xs text-slate-200/80">Chỉ cần nhập biệt danh để tham gia, thông tin không được lưu trữ lâu dài.</p>
-     </form>
-    </div>
-   </div>
-  </div>
   <div id="app" class="relative h-full w-full overflow-auto" style="background: radial-gradient(circle at 20% 20%, rgba(255,255,255,0.08), transparent 35%), radial-gradient(circle at 80% 0%, rgba(124,58,237,0.22), transparent 32%), linear-gradient(135deg, #0f172a 0%, #0f172a 28%, #1e3a8a 60%, #7c3aed 100%);">
    <div class="absolute inset-0 pointer-events-none" style="background: linear-gradient(120deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0) 40%);"></div>
    <div class="snowflake" style="left: 5%; animation-duration: 10s; animation-delay: 0s;">
@@ -531,39 +507,6 @@
         mapToEditPanelValues
       });
     }
-
-    const signupOverlay = document.getElementById('signupOverlay');
-    const signupForm = document.getElementById('signupForm');
-    const nameInput = document.getElementById('playerName');
-
-    function hideSignup() {
-      signupOverlay.classList.add('hidden');
-      signupOverlay.classList.add('pointer-events-none');
-      signupOverlay.setAttribute('aria-hidden', 'true');
-    }
-
-    const savedPlayer = localStorage.getItem('minigamePlayer');
-    if (savedPlayer) {
-      hideSignup();
-    } else {
-      nameInput.focus();
-    }
-
-    signupForm.addEventListener('submit', (event) => {
-      event.preventDefault();
-      const name = nameInput.value.trim();
-
-      if (!name) {
-        nameInput.focus();
-        return;
-      }
-
-      localStorage.setItem(
-        'minigamePlayer',
-        JSON.stringify({ name, joinedAt: new Date().toISOString() })
-      );
-      hideSignup();
-    });
 
     const cards = document.querySelectorAll('.card-item');
     const reindeer = document.getElementById('reindeer');
