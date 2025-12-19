@@ -7,8 +7,19 @@
   <script src="/_sdk/element_sdk.js"></script>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
+
     body {
       box-sizing: border-box;
+      font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
+      background-color: #0b1221;
+    }
+
+    :root {
+      --glow-amber: 0 15px 60px rgba(251, 191, 36, 0.35);
+      --glow-red: 0 15px 60px rgba(248, 113, 113, 0.35);
+      --glass-surface: rgba(255, 255, 255, 0.06);
+      --glass-border: rgba(255, 255, 255, 0.14);
     }
     
     @keyframes snowfall {
@@ -36,42 +47,72 @@
       opacity: 0.8;
       animation: snowfall linear infinite;
       pointer-events: none;
+      filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.4));
     }
-    
+
     .card-item {
-      transition: all 0.3s ease;
+      transition: transform 0.3s ease, filter 0.3s ease;
     }
-    
+
+    .card-item:hover {
+      transform: translateY(-4px);
+      filter: drop-shadow(0 15px 30px rgba(0, 0, 0, 0.35));
+    }
+
     .card-content {
       transition: opacity 0.3s ease;
+      backdrop-filter: blur(14px);
+      border: 1px solid var(--glass-border);
+      background: linear-gradient(145deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.05));
     }
-    
+
     .card-closed {
       cursor: pointer;
-      transition: transform 0.2s ease;
+      transition: transform 0.2s ease, filter 0.2s ease;
     }
-    
+
     .card-closed:hover {
       transform: scale(1.05);
+      filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.25));
     }
-    
+
     .locked .card-closed {
       cursor: not-allowed;
     }
-    
+
     .locked .card-closed:hover {
       transform: none;
+      filter: none;
     }
-    
+
     .reindeer-animate {
       animation: bounce-reindeer 2s ease-in-out infinite;
+    }
+
+    .halo-ring {
+      position: absolute;
+      inset: -12px;
+      border-radius: 24px;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0) 60%);
+      opacity: 0.35;
+      filter: blur(12px);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .frosted-header {
+      background: linear-gradient(145deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.04));
+      border: 1px solid var(--glass-border);
+      box-shadow: 0 15px 45px rgba(0, 0, 0, 0.35);
+      backdrop-filter: blur(12px);
     }
   </style>
   <style>@view-transition { navigation: auto; }</style>
   <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
  </head>
  <body class="h-full">
-  <div id="app" class="h-full w-full overflow-auto" style="background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 50%, #7c3aed 100%);">
+  <div id="app" class="relative h-full w-full overflow-auto" style="background: radial-gradient(circle at 20% 20%, rgba(255,255,255,0.08), transparent 35%), radial-gradient(circle at 80% 0%, rgba(124,58,237,0.22), transparent 32%), linear-gradient(135deg, #0f172a 0%, #0f172a 28%, #1e3a8a 60%, #7c3aed 100%);">
+   <div class="absolute inset-0 pointer-events-none" style="background: linear-gradient(120deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0) 40%);"></div>
    <div class="snowflake" style="left: 5%; animation-duration: 10s; animation-delay: 0s;">
     ❄
    </div>
@@ -115,111 +156,151 @@
     ⭐
    </div>
    <div class="min-h-full flex flex-col items-center justify-center p-8">
-    <div class="text-center mb-12">
-     <div class="text-7xl mb-4 reindeer-animate">
-      🦌
+    <div class="w-full max-w-6xl mb-12 frosted-header rounded-3xl px-8 py-10 relative overflow-hidden">
+     <span class="absolute top-4 right-6 text-white/60 text-sm tracking-wide">🎄 Giáng Sinh ấm áp</span>
+     <div class="relative flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+      <div>
+       <p class="uppercase text-sm tracking-[0.2em] text-amber-200 font-semibold mb-3">Phiên bản đặc biệt</p>
+       <h1 id="gameTitle" class="text-5xl font-extrabold text-white mb-3" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">Tuần Lộc Đứt Phanh</h1>
+       <p id="gameSubtitle" class="text-xl text-amber-100 font-semibold">Lật ô chữ - Đoán sinh nhật tháng 12</p>
+      </div>
+      <div class="flex items-center gap-4">
+       <div class="rounded-2xl px-4 py-3 bg-white/10 border border-white/15 text-white shadow-lg">
+        <p class="text-xs uppercase tracking-wide text-white/70">Nhiệm vụ</p>
+        <p class="text-lg font-semibold">Hoàn thành 4 ô</p>
+       </div>
+       <div class="rounded-2xl px-4 py-3 bg-amber-400/20 border border-amber-300/30 text-amber-100 shadow-[var(--glow-amber)]">
+        <p class="text-xs uppercase tracking-wide text-amber-200">Quà tặng</p>
+        <p class="text-lg font-semibold">Bí mật 🎁</p>
+       </div>
+      </div>
      </div>
-     <h1 id="gameTitle" class="text-5xl font-bold text-white mb-3" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">Tuần Lộc Đứt Phanh</h1>
-     <p id="gameSubtitle" class="text-2xl text-yellow-300 font-semibold">Lật ô chữ - Đoán sinh nhật tháng 12</p>
     </div>
     <div class="relative max-w-6xl w-full">
-     <div class="absolute top-0 left-0 w-full" style="height: 4px; background: repeating-linear-gradient(90deg, #fbbf24 0px, #fbbf24 40px, transparent 40px, transparent 60px);"></div>
-     <div id="reindeer" class="absolute transition-all duration-1000 ease-in-out" style="top: -60px; left: 5%; font-size: 3rem; transform: scaleX(-1);">
+     <div class="absolute -top-3 left-0 w-full rounded-full" style="height: 4px; background: linear-gradient(90deg, rgba(251,191,36,0.7), rgba(94,234,212,0.6), rgba(244,114,182,0.75));"></div>
+     <div class="absolute -top-14 left-0 right-0 mx-auto w-[85%] h-16 bg-white/5 border border-white/10 rounded-full blur-xl"></div>
+     <div id="reindeer" class="absolute transition-all duration-1000 ease-in-out" style="top: -70px; left: 5%; font-size: 3.5rem; transform: scaleX(-1); text-shadow: 0 15px 30px rgba(0,0,0,0.45);">
       🦌
      </div>
      <div class="grid grid-cols-1 md:grid-cols-4 gap-6 w-full pt-16">
       <div class="card-item" data-card="1">
-       <div class="card-content" style="background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%); box-shadow: 0 10px 30px rgba(0,0,0,0.3); border-radius: 16px; padding: 24px; min-height: 280px; display: flex; flex-direction: column; justify-content: center;">
-        <div class="card-closed text-center">
-         <svg class="w-20 h-20 mx-auto mb-3" viewbox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="20" y="30" width="60" height="50" rx="5" fill="white" stroke="#333" stroke-width="3" /> <circle cx="50" cy="20" r="8" fill="white" stroke="#333" stroke-width="2" /> <path d="M 35 50 Q 35 40, 45 40 Q 50 40, 50 45 Q 50 40, 55 40 Q 65 40, 65 50" stroke="#333" stroke-width="2" fill="none" /> <path d="M 30 55 Q 50 70, 70 55" stroke="#333" stroke-width="3" fill="none" stroke-linecap="round" /> <circle cx="30" cy="55" r="3" fill="#dc2626" /> <circle cx="70" cy="55" r="3" fill="#dc2626" /> <circle cx="50" cy="70" r="3" fill="#dc2626" />
-         </svg>
-         <div class="text-2xl font-bold text-white">
-          Ô 1
+       <div class="card-content relative overflow-hidden" style="background: linear-gradient(140deg, rgba(239,68,68,0.95), rgba(248,113,113,0.85)); box-shadow: var(--glow-red); border-radius: 18px; padding: 24px; min-height: 300px; display: flex; flex-direction: column; justify-content: center;">
+        <div class="halo-ring"></div>
+        <div class="relative">
+         <div class="card-closed text-center">
+          <svg class="w-20 h-20 mx-auto mb-3" viewbox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="20" y="30" width="60" height="50" rx="5" fill="white" stroke="#333" stroke-width="3" /> <circle cx="50" cy="20" r="8" fill="white" stroke="#333" stroke-width="2" /> <path d="M 35 50 Q 35 40, 45 40 Q 50 40, 50 45 Q 50 40, 55 40 Q 65 40, 65 50" stroke="#333" stroke-width="2" fill="none" /> <path d="M 30 55 Q 50 70, 70 55" stroke="#333" stroke-width="3" fill="none" stroke-linecap="round" /> <circle cx="30" cy="55" r="3" fill="#dc2626" /> <circle cx="70" cy="55" r="3" fill="#dc2626" /> <circle cx="50" cy="70" r="3" fill="#dc2626" />
+          </svg>
+          <div class="text-2xl font-bold text-white drop-shadow-md">
+           Ô 1
+          </div>
          </div>
-        </div>
-        <div class="card-question hidden">
-         <p id="question1" class="text-lg font-semibold text-white mb-4">Ai là người khó liên lạc nhất Phúc Bình?</p><input type="text" class="answer-input w-full px-4 py-2 rounded-lg border-2 border-white text-gray-800 text-center font-semibold" placeholder="Nhập tên..."> <button class="check-btn mt-3 px-6 py-2 bg-white text-red-600 font-bold rounded-lg hover:bg-yellow-100 transition w-full">Kiểm tra</button>
-         <p class="feedback-msg mt-2 text-white font-semibold hidden"></p>
-        </div>
-        <div class="card-answer hidden">
-         <p class="text-lg font-semibold text-white mb-3">Câu trả lời:</p>
-         <p id="answer1" class="text-2xl font-bold text-yellow-300">Anh Vũ Đình Sáu</p><button class="next-btn mt-4 px-6 py-2 bg-white text-red-600 font-bold rounded-lg hover:bg-yellow-100 transition w-full">Tiếp theo ➜</button>
+         <div class="card-question hidden space-y-4">
+          <p id="question1" class="text-lg font-semibold text-white mb-2">Ai là người khó liên lạc nhất Phúc Bình?</p>
+          <input type="text" class="answer-input w-full px-4 py-3 rounded-xl border border-white/50 bg-white/80 text-gray-800 text-center font-semibold shadow-inner" placeholder="Nhập tên...">
+          <button class="check-btn mt-1 px-6 py-3 bg-white text-red-600 font-bold rounded-xl hover:bg-amber-100 transition w-full shadow-lg">Kiểm tra</button>
+          <p class="feedback-msg mt-2 text-white font-semibold hidden"></p>
+         </div>
+         <div class="card-answer hidden space-y-3">
+          <p class="text-lg font-semibold text-white">Câu trả lời:</p>
+          <p id="answer1" class="text-2xl font-bold text-yellow-300 drop-shadow-sm">Anh Vũ Đình Sáu</p>
+          <button class="next-btn mt-2 px-6 py-3 bg-white text-red-600 font-bold rounded-xl hover:bg-amber-100 transition w-full shadow-lg">Tiếp theo ➜</button>
+         </div>
         </div>
        </div>
       </div>
       <div class="card-item locked" data-card="2">
-       <div class="card-content" style="background: linear-gradient(135deg, #16a34a 0%, #22c55e 100%); box-shadow: 0 10px 30px rgba(0,0,0,0.3); border-radius: 16px; padding: 24px; min-height: 280px; display: flex; flex-direction: column; justify-content: center; opacity: 0.5;">
-        <div class="card-closed text-center">
-         <div class="text-7xl mb-3">
-          💰
+       <div class="card-content relative overflow-hidden" style="background: linear-gradient(150deg, rgba(22,163,74,0.95), rgba(34,197,94,0.85)); box-shadow: 0 15px 40px rgba(34,197,94,0.35); border-radius: 18px; padding: 24px; min-height: 300px; display: flex; flex-direction: column; justify-content: center; opacity: 0.55;">
+        <div class="halo-ring"></div>
+        <div class="relative">
+         <div class="card-closed text-center">
+          <div class="text-7xl mb-3">
+           💰
+          </div>
+          <div class="text-2xl font-bold text-white drop-shadow-md">
+           Ô 2
+          </div>
+          <div class="text-sm text-white mt-2">
+           🔒 Hoàn thành Ô 1 trước
+          </div>
          </div>
-         <div class="text-2xl font-bold text-white">
-          Ô 2
+         <div class="card-question hidden space-y-4">
+          <p id="question2" class="text-lg font-semibold text-white mb-2">Ai giàu nhất Công ty với biệt danh .... tiền tỷ?</p>
+          <input type="text" class="answer-input w-full px-4 py-3 rounded-xl border border-white/50 bg-white/85 text-gray-800 text-center font-semibold shadow-inner" placeholder="Nhập tên...">
+          <button class="check-btn mt-1 px-6 py-3 bg-white text-green-600 font-bold rounded-xl hover:bg-amber-100 transition w-full shadow-lg">Kiểm tra</button>
+          <p class="feedback-msg mt-2 text-white font-semibold hidden"></p>
          </div>
-         <div class="text-sm text-white mt-2">
-          🔒 Hoàn thành Ô 1 trước
+         <div class="card-answer hidden space-y-3">
+          <p class="text-lg font-semibold text-white">Câu trả lời:</p>
+          <p id="answer2" class="text-2xl font-bold text-yellow-300 drop-shadow-sm">Anh Nguyễn Tiến Tùng</p>
+          <button class="next-btn mt-2 px-6 py-3 bg-white text-green-600 font-bold rounded-xl hover:bg-amber-100 transition w-full shadow-lg">Tiếp theo ➜</button>
          </div>
-        </div>
-        <div class="card-question hidden">
-         <p id="question2" class="text-lg font-semibold text-white mb-4">Ai giàu nhất Công ty với biệt danh .... tiền tỷ?</p><input type="text" class="answer-input w-full px-4 py-2 rounded-lg border-2 border-white text-gray-800 text-center font-semibold" placeholder="Nhập tên..."> <button class="check-btn mt-3 px-6 py-2 bg-white text-green-600 font-bold rounded-lg hover:bg-yellow-100 transition w-full">Kiểm tra</button>
-         <p class="feedback-msg mt-2 text-white font-semibold hidden"></p>
-        </div>
-        <div class="card-answer hidden">
-         <p class="text-lg font-semibold text-white mb-3">Câu trả lời:</p>
-         <p id="answer2" class="text-2xl font-bold text-yellow-300">Anh Nguyễn Tiến Tùng</p><button class="next-btn mt-4 px-6 py-2 bg-white text-green-600 font-bold rounded-lg hover:bg-yellow-100 transition w-full">Tiếp theo ➜</button>
         </div>
        </div>
       </div>
-      <div class="card-item locked" data-card="3">
-       <div class="card-content" style="background: linear-gradient(135deg, #d97706 0%, #f59e0b 100%); box-shadow: 0 10px 30px rgba(0,0,0,0.3); border-radius: 16px; padding: 24px; min-height: 280px; display: flex; flex-direction: column; justify-content: center; opacity: 0.5;">
-        <div class="card-closed text-center">
-         <div class="text-7xl mb-3">
-          🎤
-         </div>
-         <div class="text-2xl font-bold text-white">
-          Ô 3
-         </div>
-         <div class="text-sm text-white mt-2">
-          🔒 Hoàn thành Ô 2 trước
-         </div>
-        </div>
-        <div class="card-question hidden">
-         <p id="question3" class="text-lg font-semibold text-white mb-4">Danh ca của tầng 3 là ai?</p><input type="text" class="answer-input w-full px-4 py-2 rounded-lg border-2 border-white text-gray-800 text-center font-semibold" placeholder="Nhập tên..."> <button class="check-btn mt-3 px-6 py-2 bg-white text-orange-600 font-bold rounded-lg hover:bg-yellow-100 transition w-full">Kiểm tra</button>
-         <p class="feedback-msg mt-2 text-white font-semibold hidden"></p>
-        </div>
-        <div class="card-answer hidden">
-         <p class="text-lg font-semibold text-white mb-3">Câu trả lời:</p>
-         <p id="answer3" class="text-2xl font-bold text-yellow-300">Lê Danh Huy</p><button class="next-btn mt-4 px-6 py-2 bg-white text-orange-600 font-bold rounded-lg hover:bg-yellow-100 transition w-full">Tiếp theo ➜</button>
-        </div>
-       </div>
-      </div>
-      <div class="card-item locked" data-card="4">
-       <div class="card-content" style="background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%); box-shadow: 0 10px 30px rgba(0,0,0,0.3); border-radius: 16px; padding: 24px; min-height: 280px; display: flex; flex-direction: column; justify-content: center; opacity: 0.5;">
-        <div class="card-closed text-center">
-         <div class="text-7xl mb-3">
-          🕊️
-         </div>
-         <div class="text-2xl font-bold text-white">
-          Ô 4
-         </div>
-         <div class="text-sm text-white mt-2">
-          🔒 Hoàn thành Ô 3 trước
+        <div class="card-item locked" data-card="3">
+         <div class="card-content relative overflow-hidden" style="background: linear-gradient(150deg, rgba(217,119,6,0.95), rgba(245,158,11,0.85)); box-shadow: 0 15px 40px rgba(245,158,11,0.35); border-radius: 18px; padding: 24px; min-height: 300px; display: flex; flex-direction: column; justify-content: center; opacity: 0.55;">
+          <div class="halo-ring"></div>
+          <div class="relative">
+           <div class="card-closed text-center">
+            <div class="text-7xl mb-3">
+             🎤
+            </div>
+            <div class="text-2xl font-bold text-white drop-shadow-md">
+             Ô 3
+            </div>
+            <div class="text-sm text-white mt-2">
+             🔒 Hoàn thành Ô 2 trước
+            </div>
+           </div>
+           <div class="card-question hidden space-y-4">
+            <p id="question3" class="text-lg font-semibold text-white mb-2">Danh ca của tầng 3 là ai?</p>
+            <input type="text" class="answer-input w-full px-4 py-3 rounded-xl border border-white/50 bg-white/85 text-gray-800 text-center font-semibold shadow-inner" placeholder="Nhập tên...">
+            <button class="check-btn mt-1 px-6 py-3 bg-white text-orange-600 font-bold rounded-xl hover:bg-amber-100 transition w-full shadow-lg">Kiểm tra</button>
+            <p class="feedback-msg mt-2 text-white font-semibold hidden"></p>
+           </div>
+           <div class="card-answer hidden space-y-3">
+            <p class="text-lg font-semibold text-white">Câu trả lời:</p>
+            <p id="answer3" class="text-2xl font-bold text-yellow-300 drop-shadow-sm">Lê Danh Huy</p><button class="next-btn mt-2 px-6 py-3 bg-white text-orange-600 font-bold rounded-xl hover:bg-amber-100 transition w-full shadow-lg">Tiếp theo ➜</button>
+           </div>
+          </div>
          </div>
         </div>
-        <div class="card-question hidden">
-         <p id="question4" class="text-lg font-semibold text-white mb-4">Ai là người tự do nhất tầng 6?</p><input type="text" class="answer-input w-full px-4 py-2 rounded-lg border-2 border-white text-gray-800 text-center font-semibold" placeholder="Nhập tên..."> <button class="check-btn mt-3 px-6 py-2 bg-white text-purple-600 font-bold rounded-lg hover:bg-yellow-100 transition w-full">Kiểm tra</button>
-         <p class="feedback-msg mt-2 text-white font-semibold hidden"></p>
+        <div class="card-item locked" data-card="4">
+         <div class="card-content relative overflow-hidden" style="background: linear-gradient(150deg, rgba(124,58,237,0.95), rgba(168,85,247,0.85)); box-shadow: 0 15px 40px rgba(168,85,247,0.35); border-radius: 18px; padding: 24px; min-height: 300px; display: flex; flex-direction: column; justify-content: center; opacity: 0.55;">
+          <div class="halo-ring"></div>
+          <div class="relative">
+           <div class="card-closed text-center">
+            <div class="text-7xl mb-3">
+             🕊️
+            </div>
+            <div class="text-2xl font-bold text-white drop-shadow-md">
+             Ô 4
+            </div>
+            <div class="text-sm text-white mt-2">
+             🔒 Hoàn thành Ô 3 trước
+            </div>
+           </div>
+           <div class="card-question hidden space-y-4">
+            <p id="question4" class="text-lg font-semibold text-white mb-2">Ai là người tự do nhất tầng 6?</p>
+            <input type="text" class="answer-input w-full px-4 py-3 rounded-xl border border-white/50 bg-white/85 text-gray-800 text-center font-semibold shadow-inner" placeholder="Nhập tên...">
+            <button class="check-btn mt-1 px-6 py-3 bg-white text-purple-600 font-bold rounded-xl hover:bg-amber-100 transition w-full shadow-lg">Kiểm tra</button>
+            <p class="feedback-msg mt-2 text-white font-semibold hidden"></p>
+           </div>
+           <div class="card-answer hidden space-y-3">
+            <p class="text-lg font-semibold text-white">Câu trả lời:</p>
+            <p id="answer4" class="text-2xl font-bold text-yellow-300 drop-shadow-sm">Anh Trần Xuân Trường</p>
+            <button class="next-btn mt-2 px-6 py-3 bg-white text-purple-600 font-bold rounded-xl hover:bg-amber-100 transition w-full shadow-lg">Hoàn thành! 🎉</button>
+           </div>
+          </div>
+         </div>
         </div>
-        <div class="card-answer hidden">
-         <p class="text-lg font-semibold text-white mb-3">Câu trả lời:</p>
-         <p id="answer4" class="text-2xl font-bold text-yellow-300">Anh Trần Xuân Trường</p><button class="next-btn mt-4 px-6 py-2 bg-white text-purple-600 font-bold rounded-lg hover:bg-yellow-100 transition w-full">Hoàn thành! 🎉</button>
-        </div>
-       </div>
-      </div>
      </div>
     </div>
-    <div class="mt-12 text-center"><button id="resetBtn" class="px-8 py-4 text-xl font-bold text-white rounded-full shadow-lg transform transition hover:scale-105" style="background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);"> 🔄 Chơi lại </button>
-    </div>
+     <div class="mt-12 text-center">
+      <button id="resetBtn" class="px-9 py-4 text-xl font-bold text-white rounded-full shadow-2xl transform transition hover:scale-105 border border-white/30" style="background: linear-gradient(120deg, #ef4444 0%, #f97316 50%, #facc15 100%); box-shadow: var(--glow-red);">
+       🔄 Chơi lại
+      </button>
+     </div>
    </div>
   </div>
   <script>
@@ -248,7 +329,7 @@
       const customFont = config.font_family || defaultConfig.font_family;
       const baseFontStack = 'ui-sans-serif, system-ui, sans-serif';
       
-      document.getElementById('app').style.background = `linear-gradient(135deg, #0f172a 0%, ${config.background_color || defaultConfig.background_color} 50%, #7c3aed 100%)`;
+      document.getElementById('app').style.background = `radial-gradient(circle at 20% 20%, rgba(255,255,255,0.08), transparent 35%), radial-gradient(circle at 80% 0%, rgba(124,58,237,0.22), transparent 32%), linear-gradient(135deg, #0f172a 0%, ${config.background_color || defaultConfig.background_color} 60%, #7c3aed 100%)`;
       document.getElementById('resetBtn').style.background = `linear-gradient(135deg, ${config.primary_action_color || defaultConfig.primary_action_color} 0%, #ef4444 100%)`;
       
       document.getElementById('gameTitle').textContent = config.game_title || defaultConfig.game_title;
