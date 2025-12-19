@@ -178,25 +178,14 @@
     </div>
     <div class="w-full max-w-6xl mb-10 frosted-header rounded-3xl px-8 py-6 relative overflow-hidden">
      <div class="halo-ring"></div>
-     <div class="relative grid grid-cols-1 lg:grid-cols-3 gap-6 items-center">
-      <div class="lg:col-span-2 space-y-3">
+     <div class="relative grid grid-cols-1 gap-6 items-center">
+      <div class="space-y-3">
        <p class="text-sm uppercase tracking-[0.2em] text-amber-200 font-semibold">Tham gia</p>
        <h2 class="text-2xl font-bold text-white">Điền tên của bạn để xuất hiện trong danh sách người chơi</h2>
        <p class="text-white/80">Nhập tên và nhấn tham gia, hệ thống sẽ hiển thị ngay cùng mọi người đang chơi.</p>
        <div class="flex flex-col sm:flex-row gap-3 pt-2">
         <input id="participantName" type="text" class="w-full px-4 py-3 rounded-xl border border-white/25 bg-white/80 text-gray-900 font-semibold shadow-inner focus:outline-none focus:ring-2 focus:ring-amber-300" placeholder="Tên của bạn...">
         <button id="addParticipantBtn" class="px-6 py-3 bg-amber-400 text-gray-900 font-bold rounded-xl shadow-lg hover:scale-[1.02] transition">Tham gia</button>
-       </div>
-       <p id="ipNotice" class="text-white/70 text-sm"></p>
-       <p id="participantStatus" class="text-amber-200 text-sm font-semibold"></p>
-      </div>
-      <div class="bg-white/5 border border-white/10 rounded-2xl p-4 shadow-lg">
-       <div class="flex items-center justify-between text-white mb-3">
-        <span class="font-semibold">Danh sách người tham gia</span>
-        <span class="px-3 py-1 rounded-full bg-white/15 text-sm" id="participantCount">0</span>
-       </div>
-       <div id="participantList" class="space-y-2 max-h-48 overflow-y-auto">
-        <p class="text-white/70 text-sm">Chưa có ai tham gia, hãy là người đầu tiên!</p>
        </div>
       </div>
      </div>
@@ -454,198 +443,6 @@
       ]);
     }
 
-    const participants = [];
-    const storageKey = 'participantList';
-    const broadcastChannelName = 'participant-sync';
-    const participantChannel = 'BroadcastChannel' in window
-      ? new BroadcastChannel(broadcastChannelName)
-      : null;
-    let userIp = null;
-    const participantNameInput = document.getElementById('participantName');
-    const addParticipantBtn = document.getElementById('addParticipantBtn');
-    const participantList = document.getElementById('participantList');
-    const participantCount = document.getElementById('participantCount');
-
-    function replaceParticipants(newList) {
-      participants.length = 0;
-      newList.forEach((participant) => participants.push(participant));
-    }
-
-    function renderParticipants() {
-      participantList.innerHTML = '';
-
-      if (participants.length === 0) {
-        participantList.innerHTML = '<p class="text-white/70 text-sm">Chưa có ai tham gia, hãy là người đầu tiên!</p>';
-        participantCount.textContent = '0';
-        return;
-      }
-
-      participants.forEach((participant, index) => {
-        const item = document.createElement('div');
-        item.className = 'flex items-center gap-2 px-3 py-2 rounded-xl bg-white/10 border border-white/10 text-white';
-        const safeIp = participant.ip ? participant.ip : 'không rõ IP';
-        item.innerHTML = `<span class="w-7 h-7 rounded-full bg-amber-400/90 text-gray-900 font-bold grid place-items-center">${index + 1}</span><div class="flex flex-col"><span class="font-semibold">${participant.name}</span><span class="text-xs text-white/60">IP: ${safeIp}</span></div>`;
-        participantList.appendChild(item);
-      });
-
-      participantCount.textContent = participants.length;
-    }
-
-    function saveParticipants() {
-      localStorage.setItem(storageKey, JSON.stringify(participants));
-    }
-
-    function loadParticipants() {
-      const stored = localStorage.getItem(storageKey);
-      if (!stored) return [];
-
-      try {
-        const parsed = JSON.parse(stored);
-        if (Array.isArray(parsed)) {
-          return parsed
-            .filter((participant) => participant && participant.name)
-            .map((participant) => ({
-              name: participant.name,
-              ip: participant.ip || null
-            }));
-        }
-        return [];
-      } catch (error) {
-        console.error('Không thể đọc danh sách người chơi đã lưu:', error);
-        return [];
-      }
-    }
-
-    async function syncFromDataSdk() {
-      if (!window.dataSdk || typeof window.dataSdk.getData !== 'function') {
-        return null;
-      }
-
-      try {
-        const sharedState = await window.dataSdk.getData();
-        const sharedParticipants = Array.isArray(sharedState?.participants)
-          ? sharedState.participants.filter((participant) => participant && participant.name)
-          : [];
-
-        if (sharedParticipants.length) {
-          replaceParticipants(sharedParticipants.map((participant) => ({
-            name: participant.name,
-            ip: participant.ip || null
-          })));
-          saveParticipants();
-          renderParticipants();
-        }
-      } catch (error) {
-        console.warn('Không thể đồng bộ dữ liệu chung:', error);
-      }
-    }
-
-    async function pushParticipantsToDataSdk() {
-      if (!window.dataSdk || typeof window.dataSdk.setData !== 'function') {
-        return;
-      }
-
-      try {
-        await window.dataSdk.setData({ participants });
-      } catch (error) {
-        console.warn('Không thể cập nhật danh sách chung:', error);
-      }
-    }
-
-    const participantStatus = document.getElementById('participantStatus');
-
-    function showStatus(message, type = 'info') {
-      if (!message) {
-        participantStatus.textContent = '';
-        return;
-      }
-
-      participantStatus.textContent = message;
-      participantStatus.className = type === 'error'
-        ? 'text-red-200 text-sm font-semibold'
-        : 'text-emerald-200 text-sm font-semibold';
-    }
-
-    async function fetchUserIp() {
-      const notice = document.getElementById('ipNotice');
-      try {
-        const response = await fetch('https://api.ipify.org?format=json');
-        const data = await response.json();
-        userIp = data.ip;
-        notice.textContent = `IP của bạn: ${userIp} (mỗi IP chỉ được tham gia 1 người).`;
-      } catch (error) {
-        console.warn('Không thể lấy IP người dùng:', error);
-        notice.textContent = 'Không thể lấy IP, hệ thống vẫn giới hạn 1 người/IP trên thiết bị này.';
-      }
-    }
-
-    function addParticipant() {
-      const name = participantNameInput.value.trim();
-      if (!name) {
-        participantNameInput.focus();
-        return;
-      }
-
-      const duplicateIp = userIp && participants.some((participant) => participant.ip === userIp);
-      if (duplicateIp) {
-        showStatus('Mỗi IP chỉ được tham gia một người. Bạn đã tham gia trước đó.', 'error');
-        participantNameInput.value = '';
-        return;
-      }
-
-      participants.push({ name, ip: userIp });
-      saveParticipants();
-      pushParticipantsToDataSdk();
-      participantChannel?.postMessage({ type: 'participants-updated' });
-      showStatus('Đã tham gia thành công!');
-      participantNameInput.value = '';
-      renderParticipants();
-      participantNameInput.focus();
-    }
-
-    addParticipantBtn.addEventListener('click', addParticipant);
-    participantNameInput.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') {
-        addParticipant();
-      }
-    });
-
-    participantChannel?.addEventListener('message', (event) => {
-      if (event.data?.type === 'participants-updated') {
-        const latest = loadParticipants();
-        replaceParticipants(latest);
-        renderParticipants();
-      }
-    });
-
-    window.addEventListener('storage', (event) => {
-      if (event.key === storageKey) {
-        const latest = loadParticipants();
-        replaceParticipants(latest);
-        renderParticipants();
-      }
-    });
-
-    async function initParticipants() {
-      const cached = loadParticipants();
-      replaceParticipants(cached);
-      renderParticipants();
-      await syncFromDataSdk();
-      fetchUserIp();
-
-      if (window.dataSdk && typeof window.dataSdk.subscribe === 'function') {
-        window.dataSdk.subscribe((data) => {
-          if (Array.isArray(data?.participants)) {
-            replaceParticipants(data.participants.filter((participant) => participant && participant.name));
-            saveParticipants();
-            renderParticipants();
-          }
-        });
-      }
-    }
-
-    initParticipants();
-
     if (window.elementSdk) {
       window.elementSdk.init({
         defaultConfig,
@@ -653,6 +450,16 @@
         mapToCapabilities,
         mapToEditPanelValues
       });
+    } else {
+      (async function mockElementSdk() {
+        window.elementSdk = {
+          init: async () => {},
+          onConfigChange: async () => {},
+          setConfig: () => {}
+        };
+
+        await onConfigChange(defaultConfig);
+      })();
     }
 
     const cards = document.querySelectorAll('.card-item');
