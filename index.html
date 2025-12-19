@@ -97,15 +97,18 @@
 
     .reindeer-icon {
       display: inline-block;
+      transform: scaleX(-1);
+      filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.45));
     }
 
     .logo-sleigh {
       position: relative;
       padding: 10px 14px 14px;
-      background: linear-gradient(145deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.08));
+      background: linear-gradient(145deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02));
       border: 1px solid var(--glass-border);
       border-radius: 14px;
       box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+      backdrop-filter: blur(12px) saturate(130%);
     }
 
     .logo-sleigh::before {
