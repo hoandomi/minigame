@@ -123,18 +123,14 @@
        <h2 class="text-2xl font-bold text-white">Đăng nhập để bắt đầu chơi</h2>
       </div>
      </div>
-     <p class="text-sm leading-relaxed text-slate-200/90">Vui lòng điền thông tin để mở khóa minigame. Form sẽ biến mất sau khi bạn đăng nhập.</p>
+     <p class="text-sm leading-relaxed text-slate-200/90">Vui lòng nhập biệt danh để mở khóa minigame. Form sẽ biến mất sau khi bạn đăng nhập.</p>
      <form id="signupForm" class="space-y-4">
       <div>
-       <label for="playerName" class="text-sm font-semibold text-amber-100">Họ và tên</label>
-       <input id="playerName" name="playerName" type="text" required class="mt-1 w-full rounded-xl border border-white/20 bg-slate-900/60 px-4 py-3 text-white placeholder:text-slate-300/70 focus:border-amber-300 focus:outline-none" placeholder="Nhập họ và tên" />
-      </div>
-      <div>
-       <label for="playerEmail" class="text-sm font-semibold text-amber-100">Email</label>
-       <input id="playerEmail" name="playerEmail" type="email" required class="mt-1 w-full rounded-xl border border-white/20 bg-slate-900/60 px-4 py-3 text-white placeholder:text-slate-300/70 focus:border-amber-300 focus:outline-none" placeholder="Nhập email công ty" />
+       <label for="playerName" class="text-sm font-semibold text-amber-100">Biệt danh</label>
+       <input id="playerName" name="playerName" type="text" required class="mt-1 w-full rounded-xl border border-white/20 bg-slate-900/60 px-4 py-3 text-white placeholder:text-slate-300/70 focus:border-amber-300 focus:outline-none" placeholder="Nhập biệt danh" />
       </div>
       <button type="submit" class="w-full rounded-xl bg-gradient-to-r from-amber-400 via-rose-400 to-purple-500 px-4 py-3 text-center text-base font-semibold text-slate-900 shadow-lg shadow-amber-500/30 transition hover:from-amber-300 hover:via-rose-300 hover:to-purple-400">Đăng nhập &amp; tham gia</button>
-      <p class="text-xs text-slate-200/80">Thông tin chỉ dùng để xác nhận và không được lưu trữ lâu dài.</p>
+      <p class="text-xs text-slate-200/80">Chỉ cần nhập biệt danh để tham gia, thông tin không được lưu trữ lâu dài.</p>
      </form>
     </div>
    </div>
@@ -539,7 +535,6 @@
     const signupOverlay = document.getElementById('signupOverlay');
     const signupForm = document.getElementById('signupForm');
     const nameInput = document.getElementById('playerName');
-    const emailInput = document.getElementById('playerEmail');
 
     function hideSignup() {
       signupOverlay.classList.add('hidden');
@@ -557,17 +552,15 @@
     signupForm.addEventListener('submit', (event) => {
       event.preventDefault();
       const name = nameInput.value.trim();
-      const email = emailInput.value.trim();
 
-      if (!name || !email) {
-        if (!name) nameInput.focus();
-        else emailInput.focus();
+      if (!name) {
+        nameInput.focus();
         return;
       }
 
       localStorage.setItem(
         'minigamePlayer',
-        JSON.stringify({ name, email, joinedAt: new Date().toISOString() })
+        JSON.stringify({ name, joinedAt: new Date().toISOString() })
       );
       hideSignup();
     });
