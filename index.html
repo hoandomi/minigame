@@ -455,11 +455,21 @@
     }
 
     const participants = [];
+    const storageKey = 'participantList';
+    const broadcastChannelName = 'participant-sync';
+    const participantChannel = 'BroadcastChannel' in window
+      ? new BroadcastChannel(broadcastChannelName)
+      : null;
     let userIp = null;
     const participantNameInput = document.getElementById('participantName');
     const addParticipantBtn = document.getElementById('addParticipantBtn');
     const participantList = document.getElementById('participantList');
     const participantCount = document.getElementById('participantCount');
+
+    function replaceParticipants(newList) {
+      participants.length = 0;
+      newList.forEach((participant) => participants.push(participant));
+    }
 
     function renderParticipants() {
       participantList.innerHTML = '';
@@ -482,27 +492,63 @@
     }
 
     function saveParticipants() {
-      localStorage.setItem('participantList', JSON.stringify(participants));
+      localStorage.setItem(storageKey, JSON.stringify(participants));
     }
 
     function loadParticipants() {
-      const stored = localStorage.getItem('participantList');
-      if (!stored) return;
+      const stored = localStorage.getItem(storageKey);
+      if (!stored) return [];
 
       try {
         const parsed = JSON.parse(stored);
         if (Array.isArray(parsed)) {
-          parsed.forEach((participant) => {
-            if (participant && participant.name) {
-              participants.push({
-                name: participant.name,
-                ip: participant.ip || null
-              });
-            }
-          });
+          return parsed
+            .filter((participant) => participant && participant.name)
+            .map((participant) => ({
+              name: participant.name,
+              ip: participant.ip || null
+            }));
         }
+        return [];
       } catch (error) {
         console.error('Không thể đọc danh sách người chơi đã lưu:', error);
+        return [];
+      }
+    }
+
+    async function syncFromDataSdk() {
+      if (!window.dataSdk || typeof window.dataSdk.getData !== 'function') {
+        return null;
+      }
+
+      try {
+        const sharedState = await window.dataSdk.getData();
+        const sharedParticipants = Array.isArray(sharedState?.participants)
+          ? sharedState.participants.filter((participant) => participant && participant.name)
+          : [];
+
+        if (sharedParticipants.length) {
+          replaceParticipants(sharedParticipants.map((participant) => ({
+            name: participant.name,
+            ip: participant.ip || null
+          })));
+          saveParticipants();
+          renderParticipants();
+        }
+      } catch (error) {
+        console.warn('Không thể đồng bộ dữ liệu chung:', error);
+      }
+    }
+
+    async function pushParticipantsToDataSdk() {
+      if (!window.dataSdk || typeof window.dataSdk.setData !== 'function') {
+        return;
+      }
+
+      try {
+        await window.dataSdk.setData({ participants });
+      } catch (error) {
+        console.warn('Không thể cập nhật danh sách chung:', error);
       }
     }
 
@@ -549,6 +595,8 @@
 
       participants.push({ name, ip: userIp });
       saveParticipants();
+      pushParticipantsToDataSdk();
+      participantChannel?.postMessage({ type: 'participants-updated' });
       showStatus('Đã tham gia thành công!');
       participantNameInput.value = '';
       renderParticipants();
@@ -562,9 +610,41 @@
       }
     });
 
-    loadParticipants();
-    renderParticipants();
-    fetchUserIp();
+    participantChannel?.addEventListener('message', (event) => {
+      if (event.data?.type === 'participants-updated') {
+        const latest = loadParticipants();
+        replaceParticipants(latest);
+        renderParticipants();
+      }
+    });
+
+    window.addEventListener('storage', (event) => {
+      if (event.key === storageKey) {
+        const latest = loadParticipants();
+        replaceParticipants(latest);
+        renderParticipants();
+      }
+    });
+
+    async function initParticipants() {
+      const cached = loadParticipants();
+      replaceParticipants(cached);
+      renderParticipants();
+      await syncFromDataSdk();
+      fetchUserIp();
+
+      if (window.dataSdk && typeof window.dataSdk.subscribe === 'function') {
+        window.dataSdk.subscribe((data) => {
+          if (Array.isArray(data?.participants)) {
+            replaceParticipants(data.participants.filter((participant) => participant && participant.name));
+            saveParticipants();
+            renderParticipants();
+          }
+        });
+      }
+    }
+
+    initParticipants();
 
     if (window.elementSdk) {
       window.elementSdk.init({
