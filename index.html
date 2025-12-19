@@ -89,6 +89,53 @@
       animation: bounce-reindeer 2s ease-in-out infinite;
     }
 
+    .reindeer-cart {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo-sleigh {
+      position: relative;
+      padding: 10px 14px 14px;
+      background: linear-gradient(145deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.08));
+      border: 1px solid var(--glass-border);
+      border-radius: 14px;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+    }
+
+    .logo-sleigh::before {
+      content: '';
+      position: absolute;
+      left: -38px;
+      top: 40%;
+      width: 38px;
+      height: 2px;
+      background: linear-gradient(90deg, rgba(255,255,255,0.6), rgba(251,191,36,0.8));
+      filter: drop-shadow(0 2px 6px rgba(0,0,0,0.25));
+    }
+
+    .logo-sleigh::after {
+      content: '';
+      position: absolute;
+      left: 10px;
+      right: 10px;
+      bottom: 4px;
+      height: 4px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, rgba(248, 113, 113, 0.85), rgba(94, 234, 212, 0.85));
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    .logo-sleigh img {
+      width: 88px;
+      height: auto;
+      display: block;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
+    }
+
     .halo-ring {
       position: absolute;
       inset: -12px;
@@ -179,8 +226,13 @@
     <div class="relative max-w-6xl w-full">
      <div class="absolute -top-3 left-0 w-full rounded-full" style="height: 4px; background: linear-gradient(90deg, rgba(251,191,36,0.7), rgba(94,234,212,0.6), rgba(244,114,182,0.75));"></div>
      <div class="absolute -top-14 left-0 right-0 mx-auto w-[85%] h-16 bg-white/5 border border-white/10 rounded-full blur-xl"></div>
-     <div id="reindeer" class="absolute transition-all duration-1000 ease-in-out" style="top: -70px; left: 5%; font-size: 3.5rem; transform: scaleX(-1); text-shadow: 0 15px 30px rgba(0,0,0,0.45);">
-      🦌
+     <div id="reindeer" class="absolute transition-all duration-1000 ease-in-out" style="top: -70px; left: 5%; transform: scaleX(-1); text-shadow: 0 15px 30px rgba(0,0,0,0.45);">
+      <div class="reindeer-cart reindeer-animate">
+       <span class="text-5xl" aria-label="Tuần lộc dẫn đường">🦌</span>
+       <div class="logo-sleigh" aria-label="Logo trên xe trượt tuyết">
+        <img src="./logo.png" alt="Logo minigame">
+       </div>
+      </div>
      </div>
      <div class="grid grid-cols-1 md:grid-cols-4 gap-6 w-full pt-16">
       <div class="card-item" data-card="1">
