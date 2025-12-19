@@ -155,7 +155,7 @@
    <div class="snowflake" style="left: 90%; animation-duration: 15s; animation-delay: 3s; font-size: 1em;">
     ⭐
    </div>
-   <div class="min-h-full flex flex-col items-center justify-center p-8">
+    <div class="min-h-full flex flex-col items-center justify-center p-8">
     <div class="w-full max-w-6xl mb-12 frosted-header rounded-3xl px-8 py-10 relative overflow-hidden">
      <span class="absolute top-4 right-6 text-white/60 text-sm tracking-wide">🎄 Giáng Sinh ấm áp</span>
      <div class="relative flex flex-col md:flex-row md:items-center md:justify-between gap-6">
@@ -174,6 +174,34 @@
         <p class="text-lg font-semibold">Bí mật 🎁</p>
        </div>
       </div>
+     </div>
+    </div>
+    <div class="w-full max-w-6xl mb-10 frosted-header rounded-3xl px-8 py-6 text-white/90 space-y-4">
+     <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+      <div>
+       <p class="text-sm uppercase tracking-[0.12em] text-amber-200 font-semibold">Tham gia trò chơi</p>
+       <h2 class="text-2xl font-bold text-white">Điền tên để hiện lên danh sách</h2>
+      </div>
+      <div id="participantFormWrapper" class="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center">
+       <form id="participantForm" class="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center">
+        <input id="participantName" type="text" class="w-full min-w-[220px] rounded-xl border border-white/20 bg-white/80 px-4 py-2 text-gray-800 font-semibold shadow-inner focus:outline-none focus:ring-2 focus:ring-amber-300" placeholder="Nhập tên của bạn" aria-label="Tên người tham gia" required>
+        <button type="submit" class="rounded-xl bg-amber-400 px-5 py-2 font-semibold text-amber-950 shadow-[var(--glow-amber)] transition hover:bg-amber-300">Tham gia</button>
+       </form>
+      </div>
+      <div id="participantWelcome" class="hidden rounded-xl border border-emerald-300/30 bg-emerald-400/10 px-4 py-3 text-sm font-semibold text-emerald-100 shadow-[0_10px_30px_rgba(16,185,129,0.25)]">
+       ✅ Bạn đã tham gia trò chơi
+      </div>
+     </div>
+     <p id="participantNotice" class="text-sm text-amber-100"></p>
+     <div class="rounded-2xl border border-white/15 bg-white/5 p-4">
+      <div class="mb-3 flex items-center justify-between">
+       <div class="flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.14em] text-white/80">
+        <span class="text-lg">👥</span>
+        <span>Danh sách người tham gia</span>
+       </div>
+       <span class="text-xs text-white/60">Tự động cập nhật tại đây</span>
+      </div>
+      <div id="participantList" class="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3"></div>
      </div>
     </div>
     <div class="relative max-w-6xl w-full">
@@ -442,7 +470,100 @@
     const reindeer = document.getElementById('reindeer');
     let currentCard = 0;
     const positions = ['5%', '28%', '52%', '76%'];
-    
+
+    const participantInput = document.getElementById('participantName');
+    const participantForm = document.getElementById('participantForm');
+    const participantFormWrapper = document.getElementById('participantFormWrapper');
+    const participantWelcome = document.getElementById('participantWelcome');
+    const participantListEl = document.getElementById('participantList');
+    const participantNotice = document.getElementById('participantNotice');
+    const participants = JSON.parse(localStorage.getItem('participants') || '[]');
+    let currentParticipant = localStorage.getItem('currentParticipant');
+
+    function saveParticipants() {
+      localStorage.setItem('participants', JSON.stringify(participants));
+    }
+
+    function renderParticipants() {
+      participantListEl.innerHTML = '';
+
+      if (!participants.length) {
+        const emptyState = document.createElement('p');
+        emptyState.className = 'text-sm text-white/70';
+        emptyState.textContent = 'Chưa có ai tham gia. Hãy là người đầu tiên!';
+        participantListEl.appendChild(emptyState);
+        return;
+      }
+
+      participants.forEach((name, index) => {
+        const item = document.createElement('div');
+        item.className = 'flex items-center gap-3 rounded-xl border border-white/10 bg-white/10 px-3 py-2 shadow-md shadow-black/20';
+
+        const badge = document.createElement('span');
+        badge.className = 'flex h-8 w-8 items-center justify-center rounded-full bg-amber-400 text-sm font-bold text-amber-950 shadow-[var(--glow-amber)]';
+        badge.textContent = index + 1;
+
+        const nameText = document.createElement('span');
+        nameText.className = 'text-white font-semibold';
+        nameText.textContent = name;
+
+        item.appendChild(badge);
+        item.appendChild(nameText);
+        participantListEl.appendChild(item);
+      });
+    }
+
+    function updateJoinState(name) {
+      currentParticipant = name;
+      localStorage.setItem('currentParticipant', name);
+      participantFormWrapper.classList.add('hidden');
+      participantWelcome.classList.remove('hidden');
+      participantWelcome.textContent = `✅ Xin chào, ${name}! Bạn đã tham gia trò chơi.`;
+    }
+
+    function restoreJoinState() {
+      if (currentParticipant) {
+        updateJoinState(currentParticipant);
+      }
+    }
+
+    participantForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const name = participantInput.value.trim();
+
+      if (!name) {
+        participantNotice.textContent = 'Vui lòng nhập tên trước khi tham gia.';
+        participantNotice.classList.remove('text-emerald-200');
+        participantNotice.classList.add('text-amber-100');
+        participantInput.focus();
+        return;
+      }
+
+      const normalizedName = normalizeText(name);
+      const isDuplicate = participants.some((item) => normalizeText(item) === normalizedName);
+
+      if (isDuplicate) {
+        const matchedName = participants.find((item) => normalizeText(item) === normalizedName) || name;
+        participantNotice.textContent = 'Bạn đã có trong danh sách tham gia rồi!';
+        participantNotice.classList.remove('text-emerald-200');
+        participantNotice.classList.add('text-amber-100');
+        updateJoinState(matchedName);
+      } else {
+        participants.push(name);
+        saveParticipants();
+        renderParticipants();
+        participantNotice.textContent = 'Đã thêm bạn vào danh sách tham gia. Chúc chơi vui!';
+        participantNotice.classList.remove('text-amber-100');
+        participantNotice.classList.add('text-emerald-200');
+        updateJoinState(name);
+      }
+
+      participantInput.value = '';
+    });
+
+    restoreJoinState();
+    renderParticipants();
+
     const correctAnswers = [
       'vũ đình sáu',
       'nguyễn tiến tùng',
