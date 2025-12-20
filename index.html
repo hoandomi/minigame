@@ -585,6 +585,17 @@
       closedView.classList.add('hidden');
       questionView.classList.remove('hidden');
     }
+
+    function goToNextCard(currentIndex) {
+      if (currentIndex < cards.length - 1) {
+        const nextCard = cards[currentIndex + 1];
+        nextCard.classList.remove('locked');
+        nextCard.querySelector('.card-content').style.opacity = '1';
+
+        currentCard = currentIndex + 1;
+        openCard(currentCard);
+      }
+    }
     
     cards.forEach((card, index) => {
       const closedView = card.querySelector('.card-closed');
@@ -615,6 +626,7 @@
           setTimeout(() => {
             questionView.classList.add('hidden');
             answerView.classList.remove('hidden');
+            setTimeout(() => goToNextCard(index), 1200);
           }, 800);
         } else {
           feedbackMsg.textContent = '✗ Sai rồi, thử lại nhé!';
@@ -630,15 +642,9 @@
           checkBtn.click();
         }
       });
-      
-      nextBtn.addEventListener('click', () => {
-        if (index < cards.length - 1) {
-          const nextCard = cards[index + 1];
-          nextCard.classList.remove('locked');
-          nextCard.querySelector('.card-content').style.opacity = '1';
 
-          currentCard = index + 1;
-        }
+      nextBtn.addEventListener('click', () => {
+        goToNextCard(index);
       });
     });
 
