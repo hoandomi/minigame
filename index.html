@@ -188,11 +188,49 @@
       z-index: 60;
     }
 
+    .final-screen .message-shell {
+      position: relative;
+      padding: clamp(20px, 4vw, 36px) clamp(24px, 5vw, 44px);
+      border-radius: 28px;
+      background: linear-gradient(135deg, rgba(251,191,36,0.25), rgba(59,130,246,0.2), rgba(236,72,153,0.25));
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      box-shadow: 0 22px 60px rgba(0, 0, 0, 0.45), 0 0 50px rgba(251, 191, 36, 0.28);
+      overflow: hidden;
+    }
+
+    .message-shell::before,
+    .message-shell::after {
+      content: '';
+      position: absolute;
+      inset: 6px;
+      border-radius: 24px;
+      background: radial-gradient(circle at 20% 20%, rgba(255,255,255,0.35), transparent 45%),
+        radial-gradient(circle at 80% 30%, rgba(251,191,36,0.32), transparent 50%),
+        radial-gradient(circle at 50% 80%, rgba(59,130,246,0.28), transparent 55%);
+      filter: blur(10px);
+      opacity: 0.75;
+      pointer-events: none;
+      animation: auroraGlow 6s ease-in-out infinite alternate;
+    }
+
+    .message-shell::after {
+      inset: -16px;
+      opacity: 0.45;
+      filter: blur(30px);
+    }
+
     .final-screen .message {
-      font-size: clamp(1.5rem, 3vw + 1rem, 3rem);
+      position: relative;
+      font-size: clamp(1.6rem, 3vw + 1rem, 3.2rem);
       font-weight: 800;
       line-height: 1.4;
       text-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+      z-index: 1;
+    }
+
+    @keyframes auroraGlow {
+      from { transform: translateY(-6px) scale(1.02); opacity: 0.65; }
+      to { transform: translateY(6px) scale(1.06); opacity: 0.9; }
     }
 
     .fade-in {
@@ -399,7 +437,9 @@
   </div>
  </div>
   <div id="finalScreen" class="final-screen">
-   <p class="message">Chúc mừng sinh nhật cán bộ nhân viên PhucBinh Group tháng 12</p>
+   <div class="message-shell">
+    <p class="message">Chúc mừng sinh nhật cán bộ nhân viên PhucBinh Group tháng 12</p>
+   </div>
   </div>
  <script>
     const snowContainer = document.getElementById('snowContainer');
@@ -600,12 +640,13 @@
     ];
 
     const FIREWORK_DURATION = 3800;
+    const FIREWORK_COLORS = ['#fcd34d', '#a855f7', '#38bdf8', '#f472b6', '#4ade80', '#fb7185'];
 
     function createFireworkBurst(layer, delay = 0) {
       const sparkCount = 22 + Math.floor(Math.random() * 12);
       const originLeft = 10 + Math.random() * 80;
       const baseHeight = 15 + Math.random() * 45;
-      const palette = ['#fcd34d', '#a855f7', '#38bdf8', '#f472b6'];
+      const palette = FIREWORK_COLORS;
 
       setTimeout(() => {
         const ring = document.createElement('span');
@@ -638,6 +679,25 @@
           spark.style.filter = `drop-shadow(0 0 ${blur}px ${color}) saturate(1.4)`;
 
           layer.appendChild(spark);
+        }
+
+        for (let i = 0; i < 10; i++) {
+          const ember = document.createElement('span');
+          ember.className = 'firework-spark';
+          const color = palette[Math.floor(Math.random() * palette.length)];
+
+          ember.style.left = `${originLeft + (Math.random() * 10 - 5)}%`;
+          ember.style.bottom = `${baseHeight - 2 + Math.random() * 6}%`;
+          ember.style.setProperty('--x', `${(Math.random() - 0.5) * 40}px`);
+          ember.style.setProperty('--y', `${-40 - Math.random() * 90}px`);
+          ember.style.animationDuration = '2.8s';
+          ember.style.background = `radial-gradient(circle at 40% 40%, ${color} 0%, rgba(255,255,255,0.08) 85%)`;
+          ember.style.width = `${4 + Math.random() * 5}px`;
+          ember.style.height = ember.style.width;
+          ember.style.filter = `drop-shadow(0 0 18px ${color}) saturate(1.8)`;
+          ember.style.opacity = '0.75';
+
+          layer.appendChild(ember);
         }
       }, delay);
     }
