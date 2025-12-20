@@ -33,10 +33,10 @@
     
     @keyframes snowfall {
       0% {
-        transform: translateY(-10%) rotate(0deg);
+        transform: translate(var(--sway-start, 0px), -10%) rotate(0deg);
       }
       100% {
-        transform: translateY(110%) rotate(360deg);
+        transform: translate(var(--sway-end, 0px), 110%) rotate(360deg);
       }
     }
     
@@ -50,6 +50,8 @@
     }
     
     .snowflake {
+      --sway-start: 0px;
+      --sway-end: 0px;
       position: absolute;
       color: white;
       font-size: 1.5em;
@@ -246,48 +248,7 @@
    <span class="twinkle" style="top: 28%; right: 12%; animation-delay: 0.4s;"></span>
    <span class="twinkle" style="top: 68%; left: 24%; animation-delay: 1s;"></span>
    <span class="twinkle" style="top: 78%; right: 22%; animation-delay: 1.4s;"></span>
-   <div class="snowflake" style="left: 5%; animation-duration: 10s; animation-delay: 0s;">
-    ❄
-   </div>
-   <div class="snowflake" style="left: 15%; animation-duration: 13s; animation-delay: 1s;">
-    ❄
-   </div>
-   <div class="snowflake" style="left: 25%; animation-duration: 11s; animation-delay: 3s;">
-    ❄
-   </div>
-   <div class="snowflake" style="left: 35%; animation-duration: 12s; animation-delay: 2s;">
-    ❄
-   </div>
-   <div class="snowflake" style="left: 45%; animation-duration: 14s; animation-delay: 4s;">
-    ❄
-   </div>
-   <div class="snowflake" style="left: 55%; animation-duration: 10s; animation-delay: 1.5s;">
-    ❄
-   </div>
-   <div class="snowflake" style="left: 65%; animation-duration: 13s; animation-delay: 3.5s;">
-    ❄
-   </div>
-   <div class="snowflake" style="left: 75%; animation-duration: 11s; animation-delay: 0.5s;">
-    ❄
-   </div>
-   <div class="snowflake" style="left: 85%; animation-duration: 12s; animation-delay: 2.5s;">
-    ❄
-   </div>
-   <div class="snowflake" style="left: 95%; animation-duration: 14s; animation-delay: 4.5s;">
-    ❄
-   </div>
-   <div class="snowflake" style="left: 10%; animation-duration: 15s; animation-delay: 5s; font-size: 1em;">
-    ⭐
-   </div>
-   <div class="snowflake" style="left: 40%; animation-duration: 16s; animation-delay: 2s; font-size: 1em;">
-    ⭐
-   </div>
-   <div class="snowflake" style="left: 70%; animation-duration: 17s; animation-delay: 6s; font-size: 1em;">
-    ⭐
-   </div>
-   <div class="snowflake" style="left: 90%; animation-duration: 15s; animation-delay: 3s; font-size: 1em;">
-    ⭐
-   </div>
+   <div id="snowContainer" class="absolute inset-0 pointer-events-none overflow-hidden"></div>
     <div class="min-h-full flex flex-col items-center justify-center p-8">
     <div class="w-full max-w-6xl mb-12 frosted-header rounded-3xl px-10 py-10 relative overflow-hidden">
      <div class="absolute inset-0 bg-gradient-to-r from-white/10 via-transparent to-white/5"></div>
@@ -456,9 +417,47 @@
        🔄 Chơi lại &amp; tận hưởng
      </button>
      </div>
-   </div>
   </div>
-  <script>
+ </div>
+ <script>
+    const snowContainer = document.getElementById('snowContainer');
+
+    function createSnowflakes(count = 50) {
+      if (!snowContainer) return;
+
+      const fragment = document.createDocumentFragment();
+
+      for (let i = 0; i < count; i++) {
+        const flake = document.createElement('span');
+        flake.className = 'snowflake';
+        flake.textContent = Math.random() > 0.2 ? '❄' : '✦';
+
+        const size = 0.8 + Math.random() * 1.4;
+        const duration = 8 + Math.random() * 8;
+        const delay = Math.random() * 8;
+        const startSway = (Math.random() * 40 - 20).toFixed(1);
+        const endSway = (Math.random() * 40 - 20).toFixed(1);
+
+        flake.style.fontSize = `${size}em`;
+        flake.style.left = `${Math.random() * 100}%`;
+        flake.style.animationDuration = `${duration}s`;
+        flake.style.animationDelay = `${delay}s`;
+        flake.style.setProperty('--sway-start', `${startSway}px`);
+        flake.style.setProperty('--sway-end', `${endSway}px`);
+
+        fragment.appendChild(flake);
+      }
+
+      snowContainer.innerHTML = '';
+      snowContainer.appendChild(fragment);
+    }
+
+    createSnowflakes(60);
+
+    window.addEventListener('resize', () => {
+      createSnowflakes(60);
+    });
+
     const defaultConfig = {
       background_color: "#1e3a8a",
       surface_color: "#fef3c7",
