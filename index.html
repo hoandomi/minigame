@@ -158,6 +158,43 @@
       opacity: 0.9;
     }
 
+    .firework-core {
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 30% 30%, var(--color) 0%, rgba(255, 255, 255, 0.3) 85%);
+      box-shadow: 0 0 24px rgba(255, 255, 255, 0.35), 0 0 48px color-mix(in srgb, var(--color), transparent 35%);
+      transform: translate(-50%, -50%);
+      animation: firework-core 1.8s ease-out forwards;
+      opacity: 0.85;
+    }
+
+    .firework-ring {
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      border-radius: 999px;
+      border: 2px solid color-mix(in srgb, var(--color), transparent 25%);
+      box-shadow: 0 0 28px color-mix(in srgb, var(--color), transparent 10%);
+      transform: translate(-50%, -50%);
+      animation: firework-ring 2s ease-out forwards;
+      opacity: 0.6;
+    }
+
+    .firework-trail {
+      position: absolute;
+      width: 2px;
+      height: 26px;
+      background: linear-gradient(180deg, color-mix(in srgb, var(--color), white 10%) 0%, transparent 80%);
+      border-radius: 999px;
+      transform-origin: bottom center;
+      filter: drop-shadow(0 0 12px color-mix(in srgb, var(--color), white 30%));
+      mix-blend-mode: screen;
+      animation: firework-trail 2.4s ease-out forwards;
+      opacity: 0.85;
+    }
+
     .final-screen {
       position: fixed;
       inset: 0;
@@ -201,6 +238,51 @@
       }
       100% {
         transform: translate(var(--x), calc(var(--y) - 40px)) scale(0.6);
+        opacity: 0;
+      }
+    }
+
+    @keyframes firework-core {
+      0% {
+        transform: translate(-50%, -30%) scale(0.5);
+        opacity: 0.6;
+      }
+      45% {
+        transform: translate(-50%, -50%) scale(1.3);
+        opacity: 0.95;
+      }
+      100% {
+        transform: translate(-50%, -50%) scale(0.4);
+        opacity: 0;
+      }
+    }
+
+    @keyframes firework-ring {
+      0% {
+        transform: translate(-50%, -40%) scale(0.4);
+        opacity: 0.5;
+      }
+      35% {
+        transform: translate(-50%, -50%) scale(1.2);
+        opacity: 0.9;
+      }
+      100% {
+        transform: translate(-50%, -50%) scale(1.8);
+        opacity: 0;
+      }
+    }
+
+    @keyframes firework-trail {
+      0% {
+        transform: translateY(40vh) scaleY(0.4);
+        opacity: 0.6;
+      }
+      40% {
+        transform: translate(var(--x), var(--y)) scaleY(1.2);
+        opacity: 1;
+      }
+      100% {
+        transform: translate(var(--x), calc(var(--y) - 40px)) scaleY(0.4);
         opacity: 0;
       }
     }
@@ -577,16 +659,37 @@
       const sparkCount = 22 + Math.floor(Math.random() * 12);
       const originLeft = 10 + Math.random() * 80;
       const baseHeight = 15 + Math.random() * 45;
-      const palette = ['#fcd34d', '#a855f7', '#38bdf8', '#f472b6'];
+      const palette = ['#fcd34d', '#a855f7', '#38bdf8', '#f472b6', '#f97316', '#34d399'];
 
       setTimeout(() => {
+        const burstColor = palette[Math.floor(Math.random() * palette.length)];
+
+        const core = document.createElement('span');
+        core.className = 'firework-core';
+        core.style.left = `${originLeft}%`;
+        core.style.bottom = `${baseHeight}%`;
+        core.style.setProperty('--color', burstColor);
+
+        const ring = document.createElement('span');
+        ring.className = 'firework-ring';
+        ring.style.left = `${originLeft}%`;
+        ring.style.bottom = `${baseHeight}%`;
+        ring.style.setProperty('--color', burstColor);
+
+        layer.appendChild(core);
+        layer.appendChild(ring);
+
         for (let i = 0; i < sparkCount; i++) {
           const spark = document.createElement('span');
           spark.className = 'firework-spark';
 
-          const upwardTravel = -(Math.random() * 200 + 120);
-          const xScatter = Math.random() * 220 - 110;
+          const angle = (Math.PI * 2 * i) / sparkCount + Math.random() * 0.3;
+          const distance = 140 + Math.random() * 160;
+          const xScatter = Math.cos(angle) * distance;
+          const upwardTravel = -Math.abs(Math.sin(angle) * distance) - 80;
           const color = palette[Math.floor(Math.random() * palette.length)];
+          const trail = document.createElement('span');
+          trail.className = 'firework-trail';
 
           spark.style.left = `${originLeft}%`;
           spark.style.bottom = `${baseHeight}%`;
@@ -595,7 +698,17 @@
           spark.style.animationDelay = `${Math.random() * 0.4}s`;
           spark.style.background = `radial-gradient(circle at 30% 30%, ${color} 0%, rgba(255,255,255,0.12) 80%)`;
 
+          trail.style.left = `${originLeft}%`;
+          trail.style.bottom = `${baseHeight}%`;
+          trail.style.setProperty('--x', `${xScatter}px`);
+          trail.style.setProperty('--y', `${upwardTravel}px`);
+          trail.style.animationDelay = `${Math.random() * 0.4}s`;
+          trail.style.setProperty('--color', color);
+
+          spark.style.setProperty('--color', color);
+
           layer.appendChild(spark);
+          layer.appendChild(trail);
         }
       }, delay);
     }
