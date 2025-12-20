@@ -93,6 +93,7 @@
       display: flex;
       align-items: center;
       gap: 18px;
+      transition: transform 0.4s ease;
     }
 
     .reindeer-icon {
@@ -102,15 +103,11 @@
     }
 
     .heading-left .reindeer-cart {
-      flex-direction: row-reverse;
-    }
-
-    .heading-left .reindeer-icon {
       transform: scaleX(-1);
     }
 
     .heading-right .reindeer-cart {
-      flex-direction: row;
+      transform: scaleX(1);
     }
 
     .logo-sleigh {
