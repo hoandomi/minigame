@@ -40,15 +40,6 @@
       }
     }
     
-    @keyframes bounce-reindeer {
-      0%, 100% {
-        transform: translateY(0) rotate(-10deg);
-      }
-      50% {
-        transform: translateY(-20px) rotate(-10deg);
-      }
-    }
-    
     .snowflake {
       --sway-start: 0px;
       --sway-end: 0px;
@@ -94,82 +85,6 @@
     .locked .card-closed:hover {
       transform: none;
       filter: none;
-    }
-
-    .reindeer-animate {
-      animation: bounce-reindeer 2s ease-in-out infinite;
-    }
-
-    .reindeer-cart {
-      display: flex;
-      align-items: center;
-      gap: 18px;
-      transition: transform 0.4s ease;
-    }
-
-    .reindeer-icon {
-      display: inline-block;
-      filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.45));
-      transition: transform 0.4s ease;
-    }
-
-    .heading-left .reindeer-cart {
-      transform: scaleX(1);
-    }
-
-    .heading-right .reindeer-cart {
-      transform: scaleX(-1);
-    }
-
-    .logo-sleigh {
-      position: relative;
-      padding: 10px 14px 14px;
-      background: linear-gradient(145deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02));
-      border: 1px solid var(--glass-border);
-      border-radius: 14px;
-      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
-      backdrop-filter: blur(12px) saturate(130%);
-    }
-
-    .logo-sleigh img {
-    }
-
-    .logo-sleigh::before {
-      content: '';
-      position: absolute;
-      left: -28px;
-      top: 50%;
-      width: 48px;
-      height: 3px;
-      background: linear-gradient(90deg, rgba(255,255,255,0.6), rgba(251,191,36,0.8));
-      border-radius: 999px;
-      transform: translateY(-50%);
-      filter: drop-shadow(0 2px 6px rgba(0,0,0,0.25));
-    }
-
-    .logo-sleigh::after {
-      content: '';
-      position: absolute;
-      left: 10px;
-      right: 10px;
-      bottom: 4px;
-      height: 4px;
-      border-radius: 999px;
-      background: linear-gradient(90deg, rgba(248, 113, 113, 0.85), rgba(94, 234, 212, 0.85));
-      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
-    }
-
-    .logo-sleigh img {
-      width: 88px;
-      height: auto;
-      display: block;
-      border-radius: 10px;
-      border: 1px solid rgba(255, 255, 255, 0.4);
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
-    }
-
-    .heading-right .logo-sleigh img {
-      transform: scaleX(-1);
     }
 
     .halo-ring {
@@ -290,14 +205,6 @@
     <div class="relative max-w-6xl w-full">
      <div class="absolute -top-3 left-0 w-full rounded-full" style="height: 4px; background: linear-gradient(90deg, rgba(251,191,36,0.7), rgba(94,234,212,0.6), rgba(244,114,182,0.75));"></div>
      <div class="absolute -top-14 left-0 right-0 mx-auto w-[85%] h-16 bg-white/5 border border-white/10 rounded-full blur-xl"></div>
-     <div id="reindeer" class="absolute transition-all duration-1000 ease-in-out heading-left" style="top: -70px; left: 5%; text-shadow: 0 15px 30px rgba(0,0,0,0.45);">
-      <div class="reindeer-cart reindeer-animate">
-       <span class="text-5xl reindeer-icon" aria-label="Tuần lộc dẫn đường">🦌</span>
-       <div class="logo-sleigh" aria-label="Logo trên xe trượt tuyết">
-        <img src="./logo.png" alt="Logo minigame">
-       </div>
-      </div>
-     </div>
      <div class="grid grid-cols-1 md:grid-cols-4 gap-6 w-full pt-16" data-card-track>
       <div class="card-item" data-card="1">
        <div class="card-content relative overflow-hidden" style="background: linear-gradient(140deg, rgba(239,68,68,0.95), rgba(248,113,113,0.85)); box-shadow: var(--glow-red); border-radius: 18px; padding: 24px; min-height: 300px; display: flex; flex-direction: column; justify-content: center;">
@@ -603,30 +510,7 @@
     }
 
     const cards = document.querySelectorAll('.card-item');
-    const cardTrack = document.querySelector('[data-card-track]');
-    const reindeer = document.getElementById('reindeer');
     let currentCard = 0;
-    let lastReindeerOffset = null;
-
-    function updateReindeerPosition(index) {
-      if (!cardTrack || !cards[index]) return;
-
-      const containerRect = cardTrack.getBoundingClientRect();
-      const cardRect = cards[index].getBoundingClientRect();
-      const reindeerRect = reindeer.getBoundingClientRect();
-
-      const cardCenter = cardRect.left - containerRect.left + cardRect.width / 2;
-      const offset = cardCenter - reindeerRect.width / 2;
-
-      if (lastReindeerOffset !== null) {
-        const headingLeft = offset < lastReindeerOffset;
-        reindeer.classList.toggle('heading-left', headingLeft);
-        reindeer.classList.toggle('heading-right', !headingLeft);
-      }
-
-      reindeer.style.left = `${offset}px`;
-      lastReindeerOffset = offset;
-    }
     
     const correctAnswers = [
       'vũ đình sáu',
@@ -705,7 +589,6 @@
           nextCard.querySelector('.card-content').style.opacity = '1';
 
           currentCard = index + 1;
-          updateReindeerPosition(currentCard);
         }
       });
     });
@@ -731,11 +614,8 @@
       });
       
       currentCard = 0;
-      updateReindeerPosition(currentCard);
     });
 
-    updateReindeerPosition(currentCard);
-    window.addEventListener('resize', () => updateReindeerPosition(currentCard));
   </script>
  <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9b03161a40ff4625',t:'MTc2NjEwNzMxOS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
