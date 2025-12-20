@@ -139,6 +139,40 @@
       backdrop-filter: blur(16px);
     }
 
+    .firework-layer {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 50;
+    }
+
+    .firework-spark {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: radial-gradient(circle, #fde68a 0%, rgba(251, 191, 36, 0.1) 70%);
+      box-shadow: 0 0 12px rgba(253, 224, 71, 0.7);
+      animation: firework-burst 3s ease-out forwards;
+      opacity: 0.9;
+    }
+
+    @keyframes firework-burst {
+      0% {
+        transform: translateY(40vh) scale(0.4);
+        opacity: 0.9;
+      }
+      40% {
+        transform: translate(var(--x), var(--y)) scale(1.4);
+        opacity: 1;
+      }
+      100% {
+        transform: translate(var(--x), calc(var(--y) - 40px)) scale(0.6);
+        opacity: 0;
+      }
+    }
+
   </style>
   <style>@view-transition { navigation: auto; }</style>
   <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
@@ -489,6 +523,48 @@
       'lê danh huy',
       'trần xuân trường'
     ];
+
+    const FIREWORK_DURATION = 3000;
+
+    function showFireworks() {
+      const existingLayer = document.querySelector('.firework-layer');
+      if (existingLayer) {
+        existingLayer.remove();
+      }
+
+      const layer = document.createElement('div');
+      layer.className = 'firework-layer';
+
+      const sparkCount = 28;
+      for (let i = 0; i < sparkCount; i++) {
+        const spark = document.createElement('span');
+        spark.className = 'firework-spark';
+
+        const left = Math.random() * 100;
+        const upwardTravel = -(Math.random() * 160 + 80);
+        const xScatter = Math.random() * 160 - 80;
+
+        spark.style.left = `${left}%`;
+        spark.style.bottom = '0%';
+        spark.style.setProperty('--x', `${xScatter}px`);
+        spark.style.setProperty('--y', `${upwardTravel}px`);
+
+        spark.style.background = `radial-gradient(circle, ${Math.random() > 0.5 ? '#fcd34d' : '#a855f7'} 0%, rgba(255,255,255,0.12) 80%)`;
+
+        layer.appendChild(spark);
+      }
+
+      document.body.appendChild(layer);
+
+      setTimeout(() => {
+        layer.classList.add('opacity-0');
+        layer.style.transition = 'opacity 0.6s ease-out';
+
+        setTimeout(() => {
+          layer.remove();
+        }, 600);
+      }, FIREWORK_DURATION);
+    }
     
     function normalizeText(text) {
       return text.toLowerCase()
@@ -528,12 +604,14 @@
       checkBtn.addEventListener('click', () => {
         const userAnswer = normalizeText(input.value);
         const correctAnswer = normalizeText(correctAnswers[index]);
-        
+
         if (userAnswer === correctAnswer) {
           feedbackMsg.textContent = '✓ Chính xác!';
           feedbackMsg.style.color = '#fef3c7';
           feedbackMsg.classList.remove('hidden');
-          
+
+          showFireworks();
+
           setTimeout(() => {
             questionView.classList.add('hidden');
             answerView.classList.remove('hidden');
