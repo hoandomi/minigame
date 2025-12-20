@@ -324,10 +324,17 @@
         </div>
      </div>
     </div>
+     <div id="celebrationBanner" class="hidden mt-12 text-center">
+      <div class="inline-flex items-center gap-3 px-6 py-4 rounded-2xl border border-amber-200/50 bg-white/10 backdrop-blur shadow-2xl text-amber-100 text-xl font-bold uppercase tracking-wide" style="box-shadow: var(--glow-amber);">
+       <span class="text-3xl">🎆</span>
+       <span>Chúc mừng sinh nhật cán bộ nhân viên PhucBinh Group tháng 12 - pháo nổ rực rỡ!</span>
+       <span class="text-3xl">🎇</span>
+      </div>
+     </div>
      <div class="mt-12 text-center">
-     <button id="resetBtn" class="px-9 py-4 text-xl font-bold text-white rounded-full shadow-2xl transform transition hover:scale-105 border border-white/30" style="background: linear-gradient(120deg, #ef4444 0%, #f97316 50%, #facc15 100%); box-shadow: var(--glow-red);">
+      <button id="resetBtn" class="px-9 py-4 text-xl font-bold text-white rounded-full shadow-2xl transform transition hover:scale-105 border border-white/30" style="background: linear-gradient(120deg, #ef4444 0%, #f97316 50%, #facc15 100%); box-shadow: var(--glow-red);">
        🔄 Chơi lại &amp; tận hưởng
-     </button>
+      </button>
      </div>
   </div>
  </div>
@@ -516,6 +523,9 @@
 
     const cards = document.querySelectorAll('.card-item');
     let currentCard = 0;
+    const celebrationBanner = document.getElementById('celebrationBanner');
+    const solvedCards = new Set();
+    let celebrationShown = false;
     
     const correctAnswers = [
       'vũ đình sáu',
@@ -578,6 +588,15 @@
         }, 600);
       }, FIREWORK_DURATION);
     }
+
+    function showCelebrationMessage() {
+      if (!celebrationBanner || celebrationShown) return;
+
+      celebrationShown = true;
+      celebrationBanner.classList.remove('hidden');
+      celebrationBanner.classList.add('animate-pulse');
+      showFireworks();
+    }
     
     function normalizeText(text) {
       return text.toLowerCase()
@@ -636,6 +655,11 @@
 
           showFireworks();
 
+          solvedCards.add(index);
+          if (solvedCards.size === cards.length) {
+            showCelebrationMessage();
+          }
+
           setTimeout(() => {
             questionView.classList.add('hidden');
             answerView.classList.remove('hidden');
@@ -680,8 +704,11 @@
           card.querySelector('.card-content').style.opacity = '0.5';
         }
       });
-      
+
       currentCard = 0;
+      solvedCards.clear();
+      celebrationShown = false;
+      celebrationBanner?.classList.add('hidden');
     });
 
   </script>
