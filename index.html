@@ -152,10 +152,24 @@
       width: 8px;
       height: 8px;
       border-radius: 999px;
-      background: radial-gradient(circle, #fde68a 0%, rgba(251, 191, 36, 0.1) 70%);
-      box-shadow: 0 0 12px rgba(253, 224, 71, 0.7);
+      background: radial-gradient(circle at 30% 30%, #fde68a 0%, rgba(255, 255, 255, 0.1) 75%);
+      box-shadow: 0 0 12px rgba(253, 224, 71, 0.7), 0 0 24px rgba(253, 224, 71, 0.45);
       animation: firework-burst 3s ease-out forwards;
+      mix-blend-mode: screen;
       opacity: 0.9;
+    }
+
+    .firework-ring {
+      position: absolute;
+      width: 22px;
+      height: 22px;
+      border-radius: 999px;
+      border: 2px solid #fde68a;
+      transform: translate(-50%, -50%) scale(0.45);
+      animation: firework-ring 2.6s ease-out forwards;
+      opacity: 0.85;
+      filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.35));
+      mix-blend-mode: screen;
     }
 
     .final-screen {
@@ -201,6 +215,20 @@
       }
       100% {
         transform: translate(var(--x), calc(var(--y) - 40px)) scale(0.6);
+        opacity: 0;
+      }
+    }
+
+    @keyframes firework-ring {
+      0% {
+        transform: translate(-50%, -50%) scale(0.35);
+        opacity: 0.6;
+      }
+      45% {
+        opacity: 0.9;
+      }
+      100% {
+        transform: translate(-50%, -50%) scale(2.8);
         opacity: 0;
       }
     }
@@ -580,6 +608,15 @@
       const palette = ['#fcd34d', '#a855f7', '#38bdf8', '#f472b6'];
 
       setTimeout(() => {
+        const ring = document.createElement('span');
+        const ringColor = palette[Math.floor(Math.random() * palette.length)];
+        ring.className = 'firework-ring';
+        ring.style.left = `${originLeft}%`;
+        ring.style.bottom = `${baseHeight}%`;
+        ring.style.borderColor = ringColor;
+        ring.style.boxShadow = `0 0 16px ${ringColor}, 0 0 32px ${ringColor}55`;
+        layer.appendChild(ring);
+
         for (let i = 0; i < sparkCount; i++) {
           const spark = document.createElement('span');
           spark.className = 'firework-spark';
@@ -587,6 +624,8 @@
           const upwardTravel = -(Math.random() * 200 + 120);
           const xScatter = Math.random() * 220 - 110;
           const color = palette[Math.floor(Math.random() * palette.length)];
+          const size = 6 + Math.random() * 9;
+          const blur = 8 + Math.random() * 10;
 
           spark.style.left = `${originLeft}%`;
           spark.style.bottom = `${baseHeight}%`;
@@ -594,6 +633,9 @@
           spark.style.setProperty('--y', `${upwardTravel}px`);
           spark.style.animationDelay = `${Math.random() * 0.4}s`;
           spark.style.background = `radial-gradient(circle at 30% 30%, ${color} 0%, rgba(255,255,255,0.12) 80%)`;
+          spark.style.width = `${size}px`;
+          spark.style.height = `${size}px`;
+          spark.style.filter = `drop-shadow(0 0 ${blur}px ${color}) saturate(1.4)`;
 
           layer.appendChild(spark);
         }
