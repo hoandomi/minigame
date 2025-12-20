@@ -567,6 +567,8 @@
       
       closedView.addEventListener('click', () => {
         if (!card.classList.contains('locked')) {
+          currentCard = index;
+          updateReindeerPosition(currentCard);
           openCard(index);
         }
       });
@@ -608,6 +610,13 @@
           currentCard = index + 1;
           updateReindeerPosition(currentCard);
         }
+      });
+
+      card.addEventListener('click', () => {
+        if (card.classList.contains('locked')) return;
+
+        currentCard = index;
+        updateReindeerPosition(currentCard);
       });
     });
 
