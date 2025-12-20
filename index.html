@@ -12,7 +12,12 @@
     body {
       box-sizing: border-box;
       font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
-      background-color: #0b1221;
+      background: radial-gradient(circle at 10% 10%, rgba(255, 255, 255, 0.12), transparent 30%),
+        radial-gradient(circle at 90% 0%, rgba(126, 34, 206, 0.25), transparent 32%),
+        radial-gradient(circle at 10% 90%, rgba(56, 189, 248, 0.22), transparent 40%),
+        linear-gradient(150deg, #0b1221 0%, #0f1b2f 45%, #1d2c57 100%);
+      color: #e5edff;
+      min-height: 100vh;
     }
 
     :root {
@@ -20,6 +25,10 @@
       --glow-red: 0 15px 60px rgba(248, 113, 113, 0.35);
       --glass-surface: rgba(255, 255, 255, 0.06);
       --glass-border: rgba(255, 255, 255, 0.14);
+      --frost: rgba(255, 255, 255, 0.08);
+      --gold: #fbbf24;
+      --mint: #67e8f9;
+      --berry: #f472b6;
     }
     
     @keyframes snowfall {
@@ -178,13 +187,65 @@
       box-shadow: 0 15px 45px rgba(0, 0, 0, 0.35);
       backdrop-filter: blur(12px);
     }
+
+    .aurora {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.12), transparent 32%),
+        radial-gradient(circle at 80% 20%, rgba(251, 191, 36, 0.15), transparent 40%),
+        radial-gradient(circle at 50% 70%, rgba(56, 189, 248, 0.18), transparent 42%);
+      filter: blur(35px);
+      opacity: 0.8;
+      pointer-events: none;
+    }
+
+    .twinkle {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0) 70%);
+      border-radius: 999px;
+      opacity: 0.7;
+      animation: twinkle 4s ease-in-out infinite;
+    }
+
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.3; transform: scale(0.8); }
+      50% { opacity: 0.9; transform: scale(1.2); }
+    }
+
+    .frost-card {
+      background: linear-gradient(160deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.04));
+      border: 1px solid var(--glass-border);
+      border-radius: 24px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+      backdrop-filter: blur(16px);
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+      color: #e5edff;
+      font-weight: 600;
+    }
   </style>
   <style>@view-transition { navigation: auto; }</style>
   <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
  </head>
  <body class="h-full">
-  <div id="app" class="relative h-full w-full overflow-auto" style="background: radial-gradient(circle at 20% 20%, rgba(255,255,255,0.08), transparent 35%), radial-gradient(circle at 80% 0%, rgba(124,58,237,0.22), transparent 32%), linear-gradient(135deg, #0f172a 0%, #0f172a 28%, #1e3a8a 60%, #7c3aed 100%);">
-   <div class="absolute inset-0 pointer-events-none" style="background: linear-gradient(120deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0) 40%);"></div>
+  <div id="app" class="relative h-full w-full overflow-auto" style="background: linear-gradient(135deg, rgba(15,23,42,0.8), rgba(30,41,59,0.9));">
+   <div class="aurora"></div>
+   <div class="absolute inset-0 pointer-events-none" style="background: linear-gradient(120deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0) 35%);"></div>
+   <span class="twinkle" style="top: 12%; left: 14%; animation-delay: 0s;"></span>
+   <span class="twinkle" style="top: 28%; right: 12%; animation-delay: 0.4s;"></span>
+   <span class="twinkle" style="top: 68%; left: 24%; animation-delay: 1s;"></span>
+   <span class="twinkle" style="top: 78%; right: 22%; animation-delay: 1.4s;"></span>
    <div class="snowflake" style="left: 5%; animation-duration: 10s; animation-delay: 0s;">
     ❄
    </div>
@@ -228,22 +289,39 @@
     ⭐
    </div>
     <div class="min-h-full flex flex-col items-center justify-center p-8">
-    <div class="w-full max-w-6xl mb-12 frosted-header rounded-3xl px-8 py-10 relative overflow-hidden">
-     <span class="absolute top-4 right-6 text-white/60 text-sm tracking-wide">🎄 Giáng Sinh ấm áp</span>
-     <div class="relative flex flex-col md:flex-row md:items-center md:justify-between gap-6">
-      <div>
-       <p class="uppercase text-sm tracking-[0.2em] text-amber-200 font-semibold mb-3">Phiên bản đặc biệt</p>
-       <h1 id="gameTitle" class="text-5xl font-extrabold text-white mb-3" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">Tuần Lộc Đứt Phanh</h1>
-       <p id="gameSubtitle" class="text-xl text-amber-100 font-semibold">Lật ô chữ - Đoán sinh nhật tháng 12</p>
-      </div>
-      <div class="flex items-center gap-4">
-       <div class="rounded-2xl px-4 py-3 bg-white/10 border border-white/15 text-white shadow-lg">
-        <p class="text-xs uppercase tracking-wide text-white/70">Nhiệm vụ</p>
-        <p class="text-lg font-semibold">Hoàn thành 4 ô</p>
+    <div class="w-full max-w-6xl mb-12 frosted-header rounded-3xl px-10 py-10 relative overflow-hidden">
+     <div class="absolute inset-0 bg-gradient-to-r from-white/10 via-transparent to-white/5"></div>
+     <div class="absolute -left-24 top-1/2 -translate-y-1/2 w-48 h-48 rounded-full bg-amber-400/20 blur-3xl"></div>
+     <div class="absolute -right-24 top-1/3 w-48 h-48 rounded-full bg-cyan-400/20 blur-3xl"></div>
+     <span class="absolute top-4 right-6 text-white/70 text-sm tracking-wide">✨ Mùa lễ hội ấm áp</span>
+     <div class="relative flex flex-col md:flex-row md:items-center md:justify-between gap-8">
+      <div class="space-y-4">
+       <div class="flex flex-wrap items-center gap-3">
+        <span class="chip">❄️ Christmas 2024</span>
+        <span class="chip">🎮 Minigame đặc biệt</span>
        </div>
-       <div class="rounded-2xl px-4 py-3 bg-amber-400/20 border border-amber-300/30 text-amber-100 shadow-[var(--glow-amber)]">
-        <p class="text-xs uppercase tracking-wide text-amber-200">Quà tặng</p>
-        <p class="text-lg font-semibold">Bí mật 🎁</p>
+       <div>
+        <p class="uppercase text-sm tracking-[0.25em] text-amber-200 font-semibold mb-2">Phiên bản giới hạn</p>
+        <h1 id="gameTitle" class="text-5xl font-extrabold text-white mb-2 leading-tight" style="text-shadow: 0 10px 35px rgba(0,0,0,0.35);">Tuần Lộc Đứt Phanh</h1>
+        <p id="gameSubtitle" class="text-xl text-cyan-100 font-semibold">Lật ô chữ - Đoán sinh nhật tháng 12</p>
+       </div>
+       <div class="flex items-center gap-4 flex-wrap">
+        <div class="chip">🎁 Hoàn thành 4 ô để mở quà</div>
+        <div class="chip">💌 Gửi lời chúc Giáng Sinh</div>
+       </div>
+      </div>
+      <div class="grid grid-cols-2 gap-3 min-w-[260px] text-sm">
+       <div class="frost-card px-5 py-4">
+        <p class="text-white/70 uppercase tracking-wide text-[11px]">Nhiệm vụ</p>
+        <p class="text-xl font-bold text-amber-200">4 ô nhiệm vụ</p>
+       </div>
+       <div class="frost-card px-5 py-4">
+        <p class="text-white/70 uppercase tracking-wide text-[11px]">Quà tặng</p>
+        <p class="text-xl font-bold text-teal-100">Bật mí bí mật 🎁</p>
+       </div>
+       <div class="frost-card px-5 py-4 col-span-2">
+        <p class="text-white/70 uppercase tracking-wide text-[11px]">Chủ đề</p>
+        <p class="text-lg font-semibold">Noel lung linh - Reindeer Arcade</p>
        </div>
       </div>
      </div>
@@ -374,9 +452,9 @@
      </div>
     </div>
      <div class="mt-12 text-center">
-      <button id="resetBtn" class="px-9 py-4 text-xl font-bold text-white rounded-full shadow-2xl transform transition hover:scale-105 border border-white/30" style="background: linear-gradient(120deg, #ef4444 0%, #f97316 50%, #facc15 100%); box-shadow: var(--glow-red);">
-       🔄 Chơi lại
-      </button>
+     <button id="resetBtn" class="px-9 py-4 text-xl font-bold text-white rounded-full shadow-2xl transform transition hover:scale-105 border border-white/30" style="background: linear-gradient(120deg, #ef4444 0%, #f97316 50%, #facc15 100%); box-shadow: var(--glow-red);">
+       🔄 Chơi lại &amp; tận hưởng
+     </button>
      </div>
    </div>
   </div>
@@ -398,7 +476,7 @@
       puzzle_3_question: "Danh ca của tầng 3 là ai?",
       puzzle_3_answer: "Lê Danh Huy",
       puzzle_4_question: "Ai là người tự do nhất tầng 6?",
-      puzzle_4_answer: "Anh Trần Xu����n Trường"
+      puzzle_4_answer: "Anh Trần Xuân Trường"
     };
 
     async function onConfigChange(config) {
@@ -406,8 +484,8 @@
       const customFont = config.font_family || defaultConfig.font_family;
       const baseFontStack = 'ui-sans-serif, system-ui, sans-serif';
       
-      document.getElementById('app').style.background = `radial-gradient(circle at 20% 20%, rgba(255,255,255,0.08), transparent 35%), radial-gradient(circle at 80% 0%, rgba(124,58,237,0.22), transparent 32%), linear-gradient(135deg, #0f172a 0%, ${config.background_color || defaultConfig.background_color} 60%, #7c3aed 100%)`;
-      document.getElementById('resetBtn').style.background = `linear-gradient(135deg, ${config.primary_action_color || defaultConfig.primary_action_color} 0%, #ef4444 100%)`;
+      document.getElementById('app').style.background = `radial-gradient(circle at 12% 10%, rgba(255,255,255,0.10), transparent 30%), radial-gradient(circle at 85% 12%, rgba(94,234,212,0.18), transparent 38%), radial-gradient(circle at 20% 90%, rgba(236,72,153,0.18), transparent 42%), linear-gradient(145deg, #0b1221 0%, ${config.background_color || defaultConfig.background_color} 55%, #1d2c57 100%)`;
+      document.getElementById('resetBtn').style.background = `linear-gradient(120deg, ${config.primary_action_color || defaultConfig.primary_action_color} 0%, #fb923c 50%, #fde68a 100%)`;
       
       document.getElementById('gameTitle').textContent = config.game_title || defaultConfig.game_title;
       document.getElementById('gameTitle').style.fontSize = `${baseSize * 3}px`;
