@@ -236,7 +236,7 @@
       </div>
      </div>
     </div>
-    <div class="relative max-w-6xl w-full">
+     <div class="relative max-w-6xl w-full">
      <div class="absolute -top-3 left-0 w-full rounded-full" style="height: 4px; background: linear-gradient(90deg, rgba(251,191,36,0.7), rgba(94,234,212,0.6), rgba(244,114,182,0.75));"></div>
      <div class="absolute -top-14 left-0 right-0 mx-auto w-[85%] h-16 bg-white/5 border border-white/10 rounded-full blur-xl"></div>
      <div id="reindeer" class="absolute transition-all duration-1000 ease-in-out" style="top: -70px; left: 5%; text-shadow: 0 15px 30px rgba(0,0,0,0.45);">
@@ -247,7 +247,7 @@
        </div>
       </div>
      </div>
-     <div class="grid grid-cols-1 md:grid-cols-4 gap-6 w-full pt-16">
+     <div class="grid grid-cols-1 md:grid-cols-4 gap-6 w-full pt-16" data-card-track>
       <div class="card-item" data-card="1">
        <div class="card-content relative overflow-hidden" style="background: linear-gradient(140deg, rgba(239,68,68,0.95), rgba(248,113,113,0.85)); box-shadow: var(--glow-red); border-radius: 18px; padding: 24px; min-height: 300px; display: flex; flex-direction: column; justify-content: center;">
         <div class="halo-ring"></div>
@@ -514,9 +514,22 @@
     }
 
     const cards = document.querySelectorAll('.card-item');
+    const cardTrack = document.querySelector('[data-card-track]');
     const reindeer = document.getElementById('reindeer');
     let currentCard = 0;
-    const positions = ['5%', '28%', '52%', '76%'];
+
+    function updateReindeerPosition(index) {
+      if (!cardTrack || !cards[index]) return;
+
+      const containerRect = cardTrack.getBoundingClientRect();
+      const cardRect = cards[index].getBoundingClientRect();
+      const reindeerRect = reindeer.getBoundingClientRect();
+
+      const cardCenter = cardRect.left - containerRect.left + cardRect.width / 2;
+      const offset = cardCenter - reindeerRect.width / 2;
+
+      reindeer.style.left = `${offset}px`;
+    }
     
     const correctAnswers = [
       'vũ đình sáu',
@@ -593,9 +606,9 @@
           const nextCard = cards[index + 1];
           nextCard.classList.remove('locked');
           nextCard.querySelector('.card-content').style.opacity = '1';
-          
+
           currentCard = index + 1;
-          reindeer.style.left = positions[currentCard];
+          updateReindeerPosition(currentCard);
         }
       });
     });
@@ -621,8 +634,11 @@
       });
       
       currentCard = 0;
-      reindeer.style.left = positions[0];
+      updateReindeerPosition(currentCard);
     });
+
+    updateReindeerPosition(currentCard);
+    window.addEventListener('resize', () => updateReindeerPosition(currentCard));
   </script>
  <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9b03161a40ff4625',t:'MTc2NjEwNzMxOS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
