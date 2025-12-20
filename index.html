@@ -98,6 +98,19 @@
     .reindeer-icon {
       display: inline-block;
       filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.45));
+      transition: transform 0.4s ease;
+    }
+
+    .heading-left .reindeer-cart {
+      flex-direction: row-reverse;
+    }
+
+    .heading-left .reindeer-icon {
+      transform: scaleX(-1);
+    }
+
+    .heading-right .reindeer-cart {
+      flex-direction: row;
     }
 
     .logo-sleigh {
@@ -237,7 +250,7 @@
      <div class="relative max-w-6xl w-full">
      <div class="absolute -top-3 left-0 w-full rounded-full" style="height: 4px; background: linear-gradient(90deg, rgba(251,191,36,0.7), rgba(94,234,212,0.6), rgba(244,114,182,0.75));"></div>
      <div class="absolute -top-14 left-0 right-0 mx-auto w-[85%] h-16 bg-white/5 border border-white/10 rounded-full blur-xl"></div>
-     <div id="reindeer" class="absolute transition-all duration-1000 ease-in-out" style="top: -70px; left: 5%; text-shadow: 0 15px 30px rgba(0,0,0,0.45);">
+     <div id="reindeer" class="absolute transition-all duration-1000 ease-in-out heading-right" style="top: -70px; left: 5%; text-shadow: 0 15px 30px rgba(0,0,0,0.45);">
       <div class="reindeer-cart reindeer-animate">
        <span class="text-5xl reindeer-icon" aria-label="Tuần lộc dẫn đường">🦌</span>
        <div class="logo-sleigh" aria-label="Logo trên xe trượt tuyết">
@@ -515,6 +528,7 @@
     const cardTrack = document.querySelector('[data-card-track]');
     const reindeer = document.getElementById('reindeer');
     let currentCard = 0;
+    let lastReindeerOffset = null;
 
     function updateReindeerPosition(index) {
       if (!cardTrack || !cards[index]) return;
@@ -526,7 +540,14 @@
       const cardCenter = cardRect.left - containerRect.left + cardRect.width / 2;
       const offset = cardCenter - reindeerRect.width / 2;
 
+      if (lastReindeerOffset !== null) {
+        const headingLeft = offset < lastReindeerOffset;
+        reindeer.classList.toggle('heading-left', headingLeft);
+        reindeer.classList.toggle('heading-right', !headingLeft);
+      }
+
       reindeer.style.left = `${offset}px`;
+      lastReindeerOffset = offset;
     }
     
     const correctAnswers = [
