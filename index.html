@@ -524,7 +524,34 @@
       'trần xuân trường'
     ];
 
-    const FIREWORK_DURATION = 3000;
+    const FIREWORK_DURATION = 3800;
+
+    function createFireworkBurst(layer, delay = 0) {
+      const sparkCount = 22 + Math.floor(Math.random() * 12);
+      const originLeft = 10 + Math.random() * 80;
+      const baseHeight = 15 + Math.random() * 45;
+      const palette = ['#fcd34d', '#a855f7', '#38bdf8', '#f472b6'];
+
+      setTimeout(() => {
+        for (let i = 0; i < sparkCount; i++) {
+          const spark = document.createElement('span');
+          spark.className = 'firework-spark';
+
+          const upwardTravel = -(Math.random() * 200 + 120);
+          const xScatter = Math.random() * 220 - 110;
+          const color = palette[Math.floor(Math.random() * palette.length)];
+
+          spark.style.left = `${originLeft}%`;
+          spark.style.bottom = `${baseHeight}%`;
+          spark.style.setProperty('--x', `${xScatter}px`);
+          spark.style.setProperty('--y', `${upwardTravel}px`);
+          spark.style.animationDelay = `${Math.random() * 0.4}s`;
+          spark.style.background = `radial-gradient(circle at 30% 30%, ${color} 0%, rgba(255,255,255,0.12) 80%)`;
+
+          layer.appendChild(spark);
+        }
+      }, delay);
+    }
 
     function showFireworks() {
       const existingLayer = document.querySelector('.firework-layer');
@@ -535,24 +562,10 @@
       const layer = document.createElement('div');
       layer.className = 'firework-layer';
 
-      const sparkCount = 28;
-      for (let i = 0; i < sparkCount; i++) {
-        const spark = document.createElement('span');
-        spark.className = 'firework-spark';
-
-        const left = Math.random() * 100;
-        const upwardTravel = -(Math.random() * 160 + 80);
-        const xScatter = Math.random() * 160 - 80;
-
-        spark.style.left = `${left}%`;
-        spark.style.bottom = '0%';
-        spark.style.setProperty('--x', `${xScatter}px`);
-        spark.style.setProperty('--y', `${upwardTravel}px`);
-
-        spark.style.background = `radial-gradient(circle, ${Math.random() > 0.5 ? '#fcd34d' : '#a855f7'} 0%, rgba(255,255,255,0.12) 80%)`;
-
-        layer.appendChild(spark);
-      }
+      const waveDelay = 280;
+      createFireworkBurst(layer, 0);
+      createFireworkBurst(layer, waveDelay);
+      createFireworkBurst(layer, waveDelay * 2);
 
       document.body.appendChild(layer);
 
