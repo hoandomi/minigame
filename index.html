@@ -158,6 +158,38 @@
       opacity: 0.9;
     }
 
+    .final-screen {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      background: radial-gradient(circle at 20% 20%, rgba(251,191,36,0.18), transparent 35%),
+        radial-gradient(circle at 80% 20%, rgba(94,234,212,0.15), transparent 40%),
+        radial-gradient(circle at 50% 70%, rgba(244,114,182,0.18), transparent 42%),
+        linear-gradient(160deg, #0b1221 0%, #0f172a 55%, #1e293b 100%);
+      color: #fef3c7;
+      padding: 32px;
+      z-index: 60;
+    }
+
+    .final-screen .message {
+      font-size: clamp(1.5rem, 3vw + 1rem, 3rem);
+      font-weight: 800;
+      line-height: 1.4;
+      text-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+    }
+
+    .fade-in {
+      animation: fadeIn 0.8s ease-out forwards;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.98); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
     @keyframes firework-burst {
       0% {
         transform: translateY(40vh) scale(0.4);
@@ -186,7 +218,7 @@
    <span class="twinkle" style="top: 68%; left: 24%; animation-delay: 1s;"></span>
    <span class="twinkle" style="top: 78%; right: 22%; animation-delay: 1.4s;"></span>
    <div id="snowContainer" class="absolute inset-0 pointer-events-none overflow-hidden"></div>
-    <div class="min-h-full flex flex-col items-center justify-center p-8">
+    <div id="gameContent" class="min-h-full flex flex-col items-center justify-center p-8">
     <div class="w-full max-w-6xl mb-12 frosted-header rounded-3xl px-10 py-10 relative overflow-hidden">
      <div class="absolute inset-0 bg-gradient-to-r from-white/10 via-transparent to-white/5"></div>
      <div class="absolute -left-24 top-1/2 -translate-y-1/2 w-48 h-48 rounded-full bg-amber-400/20 blur-3xl"></div>
@@ -332,12 +364,15 @@
       </div>
      </div>
      <div class="mt-12 text-center">
-      <button id="resetBtn" class="px-9 py-4 text-xl font-bold text-white rounded-full shadow-2xl transform transition hover:scale-105 border border-white/30" style="background: linear-gradient(120deg, #ef4444 0%, #f97316 50%, #facc15 100%); box-shadow: var(--glow-red);">
+     <button id="resetBtn" class="px-9 py-4 text-xl font-bold text-white rounded-full shadow-2xl transform transition hover:scale-105 border border-white/30" style="background: linear-gradient(120deg, #ef4444 0%, #f97316 50%, #facc15 100%); box-shadow: var(--glow-red);">
        🔄 Chơi lại &amp; tận hưởng
       </button>
      </div>
   </div>
  </div>
+  <div id="finalScreen" class="final-screen">
+   <p class="message">Chúc mừng sinh nhật cán bộ nhân viên PhucBinh Group tháng 12 - pháo nổ rực rỡ!</p>
+  </div>
  <script>
     const snowContainer = document.getElementById('snowContainer');
 
@@ -522,6 +557,8 @@
     }
 
     const cards = document.querySelectorAll('.card-item');
+    const gameContent = document.getElementById('gameContent');
+    const finalScreen = document.getElementById('finalScreen');
     let currentCard = 0;
     const celebrationBanner = document.getElementById('celebrationBanner');
     const solvedCards = new Set();
@@ -589,6 +626,14 @@
       }, FIREWORK_DURATION);
     }
 
+    function showFinalScreen() {
+      if (!finalScreen || !gameContent) return;
+
+      gameContent.classList.add('hidden');
+      finalScreen.style.display = 'flex';
+      finalScreen.classList.add('fade-in');
+    }
+
     function showCelebrationMessage() {
       if (!celebrationBanner || celebrationShown) return;
 
@@ -596,6 +641,7 @@
       celebrationBanner.classList.remove('hidden');
       celebrationBanner.classList.add('animate-pulse');
       showFireworks();
+      showFinalScreen();
     }
     
     function normalizeText(text) {
@@ -709,6 +755,10 @@
       solvedCards.clear();
       celebrationShown = false;
       celebrationBanner?.classList.add('hidden');
+      celebrationBanner?.classList.remove('animate-pulse');
+      finalScreen.style.display = 'none';
+      finalScreen.classList.remove('fade-in');
+      gameContent.classList.remove('hidden');
     });
 
   </script>
